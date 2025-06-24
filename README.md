@@ -1,2 +1,3 @@
-# wbpyplot
-The World Bank matplotlib theme.
+## wbpyplot
+
+The World Bank `matplotlib` theme.
