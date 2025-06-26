@@ -8,8 +8,10 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "morethemes>=0.3.1",
     "pyfonts>=1.0.0",
+    "matplotlib",
+    "morethemes>=0.3.1",
+    "seaborn>=0.13.2",
 ]
 
 [project.scripts]
