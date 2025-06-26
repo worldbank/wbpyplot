@@ -1,4 +1,4 @@
-from decorator import wb_plot
+from .decorator import wb_plot
 import numpy as np 
 
 @wb_plot(

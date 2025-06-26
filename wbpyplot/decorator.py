@@ -3,14 +3,14 @@ import seaborn as sns
 import numpy as np
 from functools import wraps
 
-from theme import get_dynamic_sizes, wb_rcparams
-from layout import (
+from .theme import get_dynamic_sizes, wb_rcparams
+from .layout import (
     render_title_subtitle_note,
     compute_total_bottom_margin
 )
-from legend import render_legend_below_plot, should_suppress_legend
-from axis import apply_axis_styling, detect_chart_type, tidy_numeric_ticks
-from number_formatting import format_number
+from .legend import render_legend_below_plot, should_suppress_legend
+from .axis import apply_axis_styling, detect_chart_type, tidy_numeric_ticks
+from .number_formatting import format_number
 
 
 def wb_plot(
