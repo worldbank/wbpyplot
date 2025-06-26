@@ -1,15 +1,7 @@
 def format_number(value, unit=None, is_percent=False, is_currency=False):
-    """
-    Formats a number using World Bank rules:
-    - Comma for thousand separator, dot for decimal
-    - Scaling (K, M, B)
-    - Special unit suffixes (Kw, Mb, etc.)
-    - Precision based on value size
-    - Skips formatting for likely year values
-    """
+
     if not isinstance(value, (int, float)):
         return str(value)
-    # Treat 4-digit integers between 1000–2100 as years
     if isinstance(value, (int, float)) and 1000 <= value <= 2100 and float(value).is_integer():
         return str(int(value))
 
@@ -17,7 +9,6 @@ def format_number(value, unit=None, is_percent=False, is_currency=False):
     suffix = ""
     scaled_val = value
 
-    # Special units like watts, tons, bits, bytes
     special_units = {
         "watt": "w", "tons": "t", "bits": "b", "bytes": "B"
     }
@@ -56,7 +47,6 @@ def format_number(value, unit=None, is_percent=False, is_currency=False):
     if suffix == "" and abs_val >= 1000:
         number_str = "{:,.0f}".format(value)
 
-    # Add currency and percent
     if is_currency:
         number_str = f"${number_str}"
     if is_percent:

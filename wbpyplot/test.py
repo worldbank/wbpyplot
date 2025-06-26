@@ -21,7 +21,6 @@ plot_employment()
     height=500,
     dpi=100,
     save_path=None,
-    seaborn_style=False,
     title="Government Investment in Key Sectors",
     subtitle="Spending from 2018 to 2024 (adjusted for inflation)",
     note=[("Source:", "National Treasury Budget Papers"),
@@ -49,8 +48,7 @@ plot_multi_series()
 @wb_plot(
     title="GDP vs Life Expectancy",
     subtitle="Scatterplot of synthetic data",
-    note=[("Source:", "World Bank (fictional).")],
-    seaborn_style=True
+    note=[("Source:", "World Bank (fictional).")]
 )
 def scatter_plot(axs):
     np.random.seed(0)
@@ -66,8 +64,7 @@ scatter_plot()
 @wb_plot(
     title="Employment by Sector",
     subtitle="Distribution across sectors in 2024",
-    note=[("Source:", "World Bank, 2024 dataset.")],
-    seaborn_style=True
+    note=[("Source:", "World Bank, 2024 dataset.")]
 )
 def bar_plot(axs):
     sectors = ["Agriculture", "Industry", "Services"]
