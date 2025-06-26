@@ -58,6 +58,3 @@ def detect_chart_type(ax):
 
     return 'single_numeric'
 
-
-def should_suppress_legend(handles, labels):
-    return len(set(labels)) <= 1

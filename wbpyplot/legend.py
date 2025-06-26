@@ -28,3 +28,7 @@ def render_legend_below_plot(fig, handles, labels, spacing, y_position):
         handletextpad=1.2,
         columnspacing=1.8
     )
+
+
+def should_suppress_legend(handles, labels):
+    return len(set(labels)) <= 1
