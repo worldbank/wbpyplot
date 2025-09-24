@@ -105,8 +105,6 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
                     ax.set_yticks(y_ticks)
                     ax.set_yticklabels(upper)
 
-            # zero line should be vertical at x=0
-            add_zero_line_v()
         else:
             # X is categorical (standard vertical bars)
             x_ticks = ax.get_xticks()
@@ -121,9 +119,6 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
                 except TypeError:
                     ax.set_xticks(x_ticks)
                     ax.set_xticklabels(upper)
-
-            # zero line should be horizontal at y=0
-            add_zero_line_h()
 
         # --- bar value labels ---
         for container in ax.containers:
