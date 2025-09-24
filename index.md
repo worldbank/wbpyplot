@@ -129,28 +129,29 @@ All World Bank Data Visualization colors are available through the style guide.
 
 `wbpyplot` comes with several color scales.
 
-The following palettes are available for mapping discrete variables to chart markers. When the `palette` parameter matches the mapped level variable, the levels will be automatically matched to their corresponding colors. The available discrete palettes and their levels are
-    - `wb_categorical`: the default palette, with 9 distinct colors
-    - `wb_categorical_text`: darker colors for the `default` palette, to be used for text
-    - `wb_region`: colors for regions. Matches the levels "wld", "nac", "lcn", "sas", "mea", "ecs", "eas", "ssf", "afe" and "afw"
-    - `wb_region_text`: darker colors for the `regions` palette, to be used for text. Matches the levels "nacText", "ssfText", "afeText", "meaText", "sasText", "easText", "wldText", "lcnText", "ecsText" and"afwText"
-    - `wb_income`: colors for income classes. Matches the levels "hic", "umic", "lmic" and"lic".
-    - `wb_gender`: colors for gender. Matches the levels "male", "female" and "diverse"
-    - `wb_urbanisation`: colors for urbanisation. Matches the levels "urban" and "rural".
-    - `wb_age`: colors for age classes. Matches the levels "youngestAge", "youngerAge", "middleAge", "olderAge" and "oldestAge"
-    - `wb_binary`: colors for binary variables. Matches the levels "yes" and "no"
+The following palettes are available for mapping discrete variables to chart markers. When the `palette` parameter matches the mapped level variable, the levels will be automatically matched to their corresponding colors. The available discrete palettes and their levels are:
+
+* `wb_categorical`: the default palette, with 9 distinct colors.
+* `wb_region`: colors for regions. Matches the levels "WLD", "NAC", "LCN", "SAS", "MEA", "ECS", "EAS", "SSF", "AFE" and "AFW"
+* `wb_income`: colors for income classes. Matches the levels "HIC", "UMIC", "LMIC" and "LIC".
+* `wb_gender`: colors for gender. Matches the levels "male", "female" and "diverse"
+* `wb_urbanisation`: colors for urbanisation. Matches the levels "urban" and "rural".
+* `wb_age`: colors for age classes. Matches the levels "youngestAge", "youngerAge", "middleAge", "olderAge" and "oldestAge"
+* `wb_binary`: colors for binary variables. Matches the levels "yes" and "no"
 
 Continuous color scales are available for sequential and diverging palettes. 
-    - `wb_div_default`: This diverging scale works best when showing numbers with a connotation of good/bad for higher or lower values (e.g. GDP growth). Use the warmer shades for the numbers with the more negative connotation and the cooler shades to show positive values.
-    - `wb_div_alt`: This diverging scale can be used as an alternative for the Default diverging scale if you want to emphasize the negative connotation of the numbers more strongly.
-    - `wb_div_neutral`: This diverging scale was designed to work well in conditions when showing numbers without a clear connotation of good/bad for higher or lower values (e.g. growth in urban vs rural living).
+
+* `wb_div_default`: This diverging scale works best when showing numbers with a connotation of good/bad for higher or lower values (e.g. GDP growth). Use the warmer shades for the numbers with the more negative connotation and the cooler shades to show positive values.
+* `wb_div_alt`: This diverging scale can be used as an alternative for the Default diverging scale if you want to emphasize the negative connotation of the numbers more strongly.
+* `wb_div_neutral`: This diverging scale was designed to work well in conditions when showing numbers without a clear connotation of good/bad for higher or lower values (e.g. growth in urban vs rural living).
 
 If you want to sample a small number of colors from the palette, add the parameter `palette_n = 2` to the function decorator - changing the integer for your number of colors. The function will select the first two hex codes in the list from the defined color palette. 
 
 If you have a continous colour scale (i.e. a scale with "seq" or "div" in the name) and want to bin the values into certain categories, set `palette_bins` argument. The answer can be one of the following:
-        - `None`: no discretization (continuous colormap).
-        - an int: number of equally spaced bins.
-        - a sequence: explicit bin edges.
+
+* `None`: no discretization (continuous colormap).
+* an int: number of equally spaced bins.
+* a sequence: explicit bin edges.
         
 Likewise if you want to break the bins into linear or other discrete bin sizes, set `palette_bin_mode` to one of "linear" or "quantile". Only applies when `palette_bins` is specified.
 
