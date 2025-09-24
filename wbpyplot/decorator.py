@@ -42,9 +42,9 @@ def wb_plot(
 
     Parameters
     ----------
-    width : int, default=600
+    width : int, default=1000
         Width of the figure in pixels.
-    height : int, default=500
+    height : int, default=800
         Height of the figure in pixels.
     dpi : int, default=100
         Resolution of the figure in dots per inch.
