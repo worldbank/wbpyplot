@@ -2,9 +2,9 @@
 
 ```python
 wb_plot(
-    width=600,
-    height=500,
-    dpi=100,
+    width=1200,
+    height=800,
+    dpi=120,
     nrows=1,
     ncols=1,
     save_path=None,
@@ -28,9 +28,9 @@ The World Bank's data visualization style guide can be accessed [here](https://w
 
 | Name             | Type                       | Description                                                                                                                                                                                 | Default    |
 |------------------|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| width            | int                        | Width of the figure in pixels.                                                                                                                                                              | `600`      |
-| height           | int                        | Height of the figure in pixels.                                                                                                                                                             | `500`      |
-| dpi              | int                        | Resolution of the figure in dots per inch.                                                                                                                                                  | `100`      |
+| width            | int                        | Width of the figure in pixels.                                                                                                                                                              | `1200`     |
+| height           | int                        | Height of the figure in pixels.                                                                                                                                                             | `800`      |
+| dpi              | int                        | Resolution of the figure in dots per inch.                                                                                                                                                  | `120`      |
 | nrows            | int                        | Number of subplot rows.                                                                                                                                                                     | `1`        |
 | ncols            | int                        | Number of subplot columns.                                                                                                                                                                  | `1`        |
 | save_path        | str or Path                | File path to save the rendered figure. If ``None``, the figure is not saved.                                                                                                                | `None`     |

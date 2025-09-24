@@ -17,7 +17,7 @@ from wbpyplot import wb_plot
 
 ### wb_plot
 
-`wb_plot` is the mai function decorator which styles all `matplotlib` (and derivatives, such as `seaborn`). Add it on top of a function calling `matlotlib` elements.
+`@wb_plot` is the main function decorator which styles all `matplotlib` (and derivatives, such as `seaborn`). Add it on top of a function calling `matlotlib` elements.
 
 For example: 
 
