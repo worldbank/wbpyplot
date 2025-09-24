@@ -7,6 +7,20 @@
     "text": "wb_plot\nwb_plot(\n    width=600,\n    height=500,\n    dpi=100,\n    nrows=1,\n    ncols=1,\n    save_path=None,\n    title=None,\n    subtitle=None,\n    note=None,\n    *,\n    palette=None,\n    palette_n=None,\n    palette_bins=None,\n    palette_bin_mode='linear',\n)\nStandardizes/stylizes Matplotlib plots (layout, titles, legends, export) and applies color logic:\n\nDiscrete (cycle) palettes: set axes.prop_cycle before plotting.\nLabel-map palettes: recolor artists by label (and legend markers).\nSequential/diverging palettes: build a Colormap object; if palette_bins is provided, discretize into bins (linear or quantile) and apply both the resulting ListedColormap and BoundaryNorm to mappables (imshow, pcolormesh, contourf) and refresh colorbars automatically."
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "wbpyplot",
+    "section": "",
+    "text": "The World Bank matplotlib theme.\nTo test, run the following steps:\n\nClone the repository from worldbank/wbpyplot.\nIn the main directory, run the following code:\n\nuv run wbpyplot/test.py\nA series of graphs should pop up."
+  },
+  {
+    "objectID": "index.html#wbpyplot",
+    "href": "index.html#wbpyplot",
+    "title": "wbpyplot",
+    "section": "",
+    "text": "The World Bank matplotlib theme.\nTo test, run the following steps:\n\nClone the repository from worldbank/wbpyplot.\nIn the main directory, run the following code:\n\nuv run wbpyplot/test.py\nA series of graphs should pop up."
+  },
+  {
     "objectID": "reference/index.html",
     "href": "reference/index.html",
     "title": "Function reference",
