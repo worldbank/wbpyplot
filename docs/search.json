@@ -1,0 +1,58 @@
+[
+  {
+    "objectID": "reference/wb_plot.html",
+    "href": "reference/wb_plot.html",
+    "title": "wb_plot",
+    "section": "",
+    "text": "wb_plot(\n    width=600,\n    height=500,\n    dpi=100,\n    nrows=1,\n    ncols=1,\n    save_path=None,\n    title=None,\n    subtitle=None,\n    note=None,\n    palette=None,\n    palette_n=None,\n    palette_bins=None,\n    palette_bin_mode='linear',\n)\nCreate a standardized Matplotlib theme via a decorator for the World Bank with consistent styling, titles, legends, and optional export. Handles both discrete and continuous color logic.\nThe World Bank’s data visualization style guide can be accessed here.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nwidth\nint\nWidth of the figure in pixels.\n600\n\n\nheight\nint\nHeight of the figure in pixels.\n500\n\n\ndpi\nint\nResolution of the figure in dots per inch.\n100\n\n\nnrows\nint\nNumber of subplot rows.\n1\n\n\nncols\nint\nNumber of subplot columns.\n1\n\n\nsave_path\nstr or Path\nFile path to save the rendered figure. If None, the figure is not saved.\nNone\n\n\ntitle\nstr\nMain title displayed at the top of the figure.\nNone\n\n\nsubtitle\nstr\nSubtitle displayed below the main title.\nNone\n\n\nnote\nstr\nFootnote or caption displayed at the bottom of the figure.\nNone\n\n\npalette\nstr, sequence, or Colormap\nColor palette definition. Supports: - Discrete palettes (cycled through categories). - Label-mapped palettes (map colors by label). - Continuous palettes (generate a Matplotlib Colormap).\nNone\n\n\npalette_n\nint\nNumber of colors to sample from the palette.\nNone\n\n\npalette_bins\nint, sequence, or None\nBinning strategy for continuous palettes: - None: no discretization (continuous colormap). - int: number of equally spaced bins. - sequence: explicit bin edges.\nNone\n\n\npalette_bin_mode\n(linear, quantile)\nMethod for discretizing continuous values when palette_bins is specified.\n\"linear\"\n\n\n\n\n\n\n\nFor discrete (categorical) palettes, the function sets axes.prop_cycle before plotting.\nFor label-mapped palettes, it recolors plot elements and their legend entries by label.\nFor continuous palettes, it creates a Colormap and, if bins are specified, generates a ListedColormap and corresponding BoundaryNorm. These are applied to compatible artists (e.g., imshow, pcolormesh, contourf), and colorbars are refreshed automatically.\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\nfig\nmatplotlib.figure.Figure\nThe created figure object.\n\n\naxes\narray of matplotlib.axes.Axes\nThe subplot axes array."
+  },
+  {
+    "objectID": "reference/wb_plot.html#parameters",
+    "href": "reference/wb_plot.html#parameters",
+    "title": "wb_plot",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nwidth\nint\nWidth of the figure in pixels.\n600\n\n\nheight\nint\nHeight of the figure in pixels.\n500\n\n\ndpi\nint\nResolution of the figure in dots per inch.\n100\n\n\nnrows\nint\nNumber of subplot rows.\n1\n\n\nncols\nint\nNumber of subplot columns.\n1\n\n\nsave_path\nstr or Path\nFile path to save the rendered figure. If None, the figure is not saved.\nNone\n\n\ntitle\nstr\nMain title displayed at the top of the figure.\nNone\n\n\nsubtitle\nstr\nSubtitle displayed below the main title.\nNone\n\n\nnote\nstr\nFootnote or caption displayed at the bottom of the figure.\nNone\n\n\npalette\nstr, sequence, or Colormap\nColor palette definition. Supports: - Discrete palettes (cycled through categories). - Label-mapped palettes (map colors by label). - Continuous palettes (generate a Matplotlib Colormap).\nNone\n\n\npalette_n\nint\nNumber of colors to sample from the palette.\nNone\n\n\npalette_bins\nint, sequence, or None\nBinning strategy for continuous palettes: - None: no discretization (continuous colormap). - int: number of equally spaced bins. - sequence: explicit bin edges.\nNone\n\n\npalette_bin_mode\n(linear, quantile)\nMethod for discretizing continuous values when palette_bins is specified.\n\"linear\""
+  },
+  {
+    "objectID": "reference/wb_plot.html#notes",
+    "href": "reference/wb_plot.html#notes",
+    "title": "wb_plot",
+    "section": "",
+    "text": "For discrete (categorical) palettes, the function sets axes.prop_cycle before plotting.\nFor label-mapped palettes, it recolors plot elements and their legend entries by label.\nFor continuous palettes, it creates a Colormap and, if bins are specified, generates a ListedColormap and corresponding BoundaryNorm. These are applied to compatible artists (e.g., imshow, pcolormesh, contourf), and colorbars are refreshed automatically."
+  },
+  {
+    "objectID": "reference/wb_plot.html#returns",
+    "href": "reference/wb_plot.html#returns",
+    "title": "wb_plot",
+    "section": "",
+    "text": "Name\nType\nDescription\n\n\n\n\nfig\nmatplotlib.figure.Figure\nThe created figure object.\n\n\naxes\narray of matplotlib.axes.Axes\nThe subplot axes array."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "wbpyplot",
+    "section": "",
+    "text": "The World Bank matplotlib theme.\nTo test, run the following steps:\n\nClone the repository from worldbank/wbpyplot.\nIn the main directory, run the following code:\n\nuv run wbpyplot/test.py\nA series of graphs should pop up."
+  },
+  {
+    "objectID": "index.html#wbpyplot",
+    "href": "index.html#wbpyplot",
+    "title": "wbpyplot",
+    "section": "",
+    "text": "The World Bank matplotlib theme.\nTo test, run the following steps:\n\nClone the repository from worldbank/wbpyplot.\nIn the main directory, run the following code:\n\nuv run wbpyplot/test.py\nA series of graphs should pop up."
+  },
+  {
+    "objectID": "reference/index.html",
+    "href": "reference/index.html",
+    "title": "Function reference",
+    "section": "",
+    "text": "wb_plot\nCreate a standardized Matplotlib theme via a decorator for the World Bank with consistent styling,"
+  },
+  {
+    "objectID": "reference/index.html#wbpyplot",
+    "href": "reference/index.html#wbpyplot",
+    "title": "Function reference",
+    "section": "",
+    "text": "wb_plot\nCreate a standardized Matplotlib theme via a decorator for the World Bank with consistent styling,"
+  }
+]

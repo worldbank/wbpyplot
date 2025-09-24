@@ -1,0 +1,9 @@
+# Function reference {.doc .doc-index}
+
+## wbpyplot
+
+
+
+| | |
+| --- | --- |
+| [wb_plot](wb_plot.qmd#wbpyplot.wb_plot) | Create a standardized Matplotlib theme via a decorator for the World Bank with consistent styling, |
