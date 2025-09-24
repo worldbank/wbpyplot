@@ -19,12 +19,45 @@ wb_plot(
 )
 ```
 
-Standardizes/stylizes Matplotlib plots (layout, titles, legends, export)
-and applies color logic:
+Create a standardized Matplotlib theme via a decorator for the World Bank with consistent styling,
+titles, legends, and optional export. Handles both discrete and
+continuous color logic.
 
-- Discrete (cycle) palettes: set axes.prop_cycle before plotting.
-- Label-map palettes: recolor artists by label (and legend markers).
-- Sequential/diverging palettes: build a Colormap object; if `palette_bins`
-  is provided, discretize into bins (linear or quantile) and apply both
-  the resulting ListedColormap and BoundaryNorm to mappables (imshow,
-  pcolormesh, contourf) and refresh colorbars automatically.
+The World Bank's data visualization style guide can be accessed [here](https://wbg-vis-design.vercel.app/).
+
+## Parameters {.doc-section .doc-section-parameters}
+
+| Name             | Type                       | Description                                                                                                                                                                                 | Default    |
+|------------------|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| width            | int                        | Width of the figure in pixels.                                                                                                                                                              | `600`      |
+| height           | int                        | Height of the figure in pixels.                                                                                                                                                             | `500`      |
+| dpi              | int                        | Resolution of the figure in dots per inch.                                                                                                                                                  | `100`      |
+| nrows            | int                        | Number of subplot rows.                                                                                                                                                                     | `1`        |
+| ncols            | int                        | Number of subplot columns.                                                                                                                                                                  | `1`        |
+| save_path        | str or Path                | File path to save the rendered figure. If ``None``, the figure is not saved.                                                                                                                | `None`     |
+| title            | str                        | Main title displayed at the top of the figure.                                                                                                                                              | `None`     |
+| subtitle         | str                        | Subtitle displayed below the main title.                                                                                                                                                    | `None`     |
+| note             | str                        | Footnote or caption displayed at the bottom of the figure.                                                                                                                                  | `None`     |
+| palette          | str, sequence, or Colormap | Color palette definition. Supports: - Discrete palettes (cycled through categories). - Label-mapped palettes (map colors by label). - Continuous palettes (generate a Matplotlib Colormap). | `None`     |
+| palette_n        | int                        | Number of colors to sample from the palette.                                                                                                                                                | `None`     |
+| palette_bins     | int, sequence, or None     | Binning strategy for continuous palettes: - ``None``: no discretization (continuous colormap). - int: number of equally spaced bins. - sequence: explicit bin edges.                        | `None`     |
+| palette_bin_mode | (linear, quantile)         | Method for discretizing continuous values when ``palette_bins`` is specified.                                                                                                               | `"linear"` |
+
+## Notes {.doc-section .doc-section-notes}
+
+- For discrete (categorical) palettes, the function sets
+  ``axes.prop_cycle`` before plotting.
+- For label-mapped palettes, it recolors plot elements and their
+  legend entries by label.
+- For continuous palettes, it creates a Colormap and, if bins are
+  specified, generates a ``ListedColormap`` and corresponding
+  ``BoundaryNorm``. These are applied to compatible artists
+  (e.g., ``imshow``, ``pcolormesh``, ``contourf``), and colorbars
+  are refreshed automatically.
+
+## Returns {.doc-section .doc-section-returns}
+
+| Name   | Type                          | Description                |
+|--------|-------------------------------|----------------------------|
+| fig    | matplotlib.figure.Figure      | The created figure object. |
+| axes   | array of matplotlib.axes.Axes | The subplot axes array.    |

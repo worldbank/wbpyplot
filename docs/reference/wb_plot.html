@@ -165,14 +165,141 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    palette_bins<span class="op">=</span><span class="va">None</span>,</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    palette_bin_mode<span class="op">=</span><span class="st">'linear'</span>,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Standardizes/stylizes Matplotlib plots (layout, titles, legends, export) and applies color logic:</p>
+<p>Create a standardized Matplotlib theme via a decorator for the World Bank with consistent styling, titles, legends, and optional export. Handles both discrete and continuous color logic.</p>
+<p>The World Bank’s data visualization style guide can be accessed <a href="https://wbg-vis-design.vercel.app/">here</a>.</p>
+<section id="parameters" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 76%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>width</td>
+<td>int</td>
+<td>Width of the figure in pixels.</td>
+<td><code>600</code></td>
+</tr>
+<tr class="even">
+<td>height</td>
+<td>int</td>
+<td>Height of the figure in pixels.</td>
+<td><code>500</code></td>
+</tr>
+<tr class="odd">
+<td>dpi</td>
+<td>int</td>
+<td>Resolution of the figure in dots per inch.</td>
+<td><code>100</code></td>
+</tr>
+<tr class="even">
+<td>nrows</td>
+<td>int</td>
+<td>Number of subplot rows.</td>
+<td><code>1</code></td>
+</tr>
+<tr class="odd">
+<td>ncols</td>
+<td>int</td>
+<td>Number of subplot columns.</td>
+<td><code>1</code></td>
+</tr>
+<tr class="even">
+<td>save_path</td>
+<td>str or Path</td>
+<td>File path to save the rendered figure. If <code>None</code>, the figure is not saved.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>title</td>
+<td>str</td>
+<td>Main title displayed at the top of the figure.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>subtitle</td>
+<td>str</td>
+<td>Subtitle displayed below the main title.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>note</td>
+<td>str</td>
+<td>Footnote or caption displayed at the bottom of the figure.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>palette</td>
+<td>str, sequence, or Colormap</td>
+<td>Color palette definition. Supports: - Discrete palettes (cycled through categories). - Label-mapped palettes (map colors by label). - Continuous palettes (generate a Matplotlib Colormap).</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>palette_n</td>
+<td>int</td>
+<td>Number of colors to sample from the palette.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>palette_bins</td>
+<td>int, sequence, or None</td>
+<td>Binning strategy for continuous palettes: - <code>None</code>: no discretization (continuous colormap). - int: number of equally spaced bins. - sequence: explicit bin edges.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>palette_bin_mode</td>
+<td>(linear, quantile)</td>
+<td>Method for discretizing continuous values when <code>palette_bins</code> is specified.</td>
+<td><code>"linear"</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes" class="level2 doc-section doc-section-notes">
+<h2 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h2>
 <ul>
-<li>Discrete (cycle) palettes: set axes.prop_cycle before plotting.</li>
-<li>Label-map palettes: recolor artists by label (and legend markers).</li>
-<li>Sequential/diverging palettes: build a Colormap object; if <code>palette_bins</code> is provided, discretize into bins (linear or quantile) and apply both the resulting ListedColormap and BoundaryNorm to mappables (imshow, pcolormesh, contourf) and refresh colorbars automatically.</li>
+<li>For discrete (categorical) palettes, the function sets <code>axes.prop_cycle</code> before plotting.</li>
+<li>For label-mapped palettes, it recolors plot elements and their legend entries by label.</li>
+<li>For continuous palettes, it creates a Colormap and, if bins are specified, generates a <code>ListedColormap</code> and corresponding <code>BoundaryNorm</code>. These are applied to compatible artists (e.g., <code>imshow</code>, <code>pcolormesh</code>, <code>contourf</code>), and colorbars are refreshed automatically.</li>
 </ul>
+</section>
+<section id="returns" class="level2 doc-section doc-section-returns">
+<h2 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>fig</td>
+<td>matplotlib.figure.Figure</td>
+<td>The created figure object.</td>
+</tr>
+<tr class="even">
+<td>axes</td>
+<td>array of matplotlib.axes.Axes</td>
+<td>The subplot axes array.</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
