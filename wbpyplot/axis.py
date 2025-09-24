@@ -35,7 +35,7 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
             if x0 <= 0 <= x1:
                 ax.axvline(0, linewidth=1, color="#8A969F", zorder=5)
 
-    if chart_type in ("scatter", "bar", "line"):
+    if chart_type in ("scatter", "line"):
         add_zero_line_h()
     if chart_type in ["line", "timeseries"]:
         ax.set_ylim(bottom=0)
@@ -104,6 +104,7 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
                 except TypeError:
                     ax.set_yticks(y_ticks)
                     ax.set_yticklabels(upper)
+            add_zero_line_v()
 
         else:
             # X is categorical (standard vertical bars)
@@ -119,6 +120,7 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
                 except TypeError:
                     ax.set_xticks(x_ticks)
                     ax.set_xticklabels(upper)
+            add_zero_line_h()
 
         # --- bar value labels ---
         for container in ax.containers:
