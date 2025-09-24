@@ -6,9 +6,6 @@ from matplotlib.lines import Line2D
 from matplotlib.collections import PathCollection
 from matplotlib.patches import Patch
 
-# -----------------------------------------------------------------------------
-# 1) Palette registry
-# -----------------------------------------------------------------------------
 PALETTES = {
     # categorical colors
     "wb_categorical": {
@@ -175,7 +172,6 @@ PALETTES = {
     },
 }
 
-# Companion text palettes (annotation-only)
 COMPANION_TEXT_ALIASES = {
     "wb_region": "wb_region_text",
     "wb_categorical": "wb_categorical_text",
@@ -213,9 +209,6 @@ AUTO_CYCLE_ONLY = {
     "wb_div_alt",
 }
 
-# -----------------------------------------------------------------------------
-# Utility helpers
-# -----------------------------------------------------------------------------
 def _is_hex_color(s):
     return isinstance(s, str) and s.startswith("#") and (len(s) in (4, 7))
 
@@ -242,9 +235,6 @@ def _resolve_from_registry(palette):
         return ("sequence", list(node))
     return None
 
-# -----------------------------------------------------------------------------
-# Public resolver
-# -----------------------------------------------------------------------------
 def resolve_color_cycle_and_label_map(
     palette=None,
     n=None,
@@ -291,9 +281,6 @@ def resolve_color_cycle_and_label_map(
 
     return None, None, None, None
 
-# -----------------------------------------------------------------------------
-# Application helpers: recolor & legend markers
-# -----------------------------------------------------------------------------
 def apply_color_map_to_axes(axs, label_map: dict[str, str]) -> None:
     for ax in axs:
         # Lines

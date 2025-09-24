@@ -3,12 +3,12 @@ from functools import wraps
 import matplotlib.pyplot as plt
 import numpy as np
 
-from theme import get_dynamic_sizes, wb_rcparams
-from layout import render_title_subtitle_note, compute_total_bottom_margin
-from legend import render_legend_below_plot, should_suppress_legend
-from axis import apply_axis_styling, detect_chart_type, tidy_numeric_ticks
-# from .number_formatting import format_number  # optional
-from colors import (
+from .theme import get_dynamic_sizes, wb_rcparams
+from .layout import render_title_subtitle_note, compute_total_bottom_margin
+from .legend import render_legend_below_plot, should_suppress_legend
+from .axis import apply_axis_styling, detect_chart_type, tidy_numeric_ticks
+from .number_formatting import format_number
+from .colors import (
     resolve_color_cycle_and_label_map,
     apply_color_map_to_axes,
     apply_annotation_text_colors,
@@ -103,17 +103,17 @@ def wb_plot(
                 apply_axis_styling(ax, font_sizes, spacing, chart_type)
                 tidy_numeric_ticks(ax, max_ticks=5)
 
-            # --- Optional number formatting (commented out) ---
+            # # --- Optional number formatting
             # def try_format(value):
             #     try:
             #         return format_number(value)
             #     except Exception:
             #         return value
-            #
+            
             # # Format Y-axis
             # y_labels = ax.get_yticks()
             # ax.set_yticklabels([try_format(y) for y in y_labels])
-            #
+            
             # # Format X-axis (only if not timeseries/scatter)
             # if chart_type != 'timeseries' or chart_type != 'scatter':
             #     x_labels = ax.get_xticks()
