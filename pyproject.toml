@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Zoe Meers", email = "zoe.meers@gmail.com" }
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.9.6"
 dependencies = [
     "pyfonts>=1.0.0",
     "cycler",
