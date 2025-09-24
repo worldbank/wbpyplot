@@ -19,9 +19,9 @@ from .colors import (
 
 
 def wb_plot(
-    width=1000,
+    width=1200,
     height=800,
-    dpi=100,
+    dpi=120,
     nrows=1,
     ncols=1,
     save_path=None,
@@ -42,11 +42,11 @@ def wb_plot(
 
     Parameters
     ----------
-    width : int, default=1000
+    width : int, default=1200
         Width of the figure in pixels.
     height : int, default=800
         Height of the figure in pixels.
-    dpi : int, default=100
+    dpi : int, default=120
         Resolution of the figure in dots per inch.
     nrows : int, default=1
         Number of subplot rows.
