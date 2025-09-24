@@ -113,3 +113,33 @@ def seq_heatmap(axs):
     cbar.set_label("Literacy Rate (%)")
 
 seq_heatmap()
+
+@wb_plot(
+    title="Binned with Explicit Thresholds",
+    subtitle="Custom edges: [50, 60, 70, 80, 90, 100]",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+    palette="wb_seq_bad_to_good",
+    palette_bins=[50, 60, 70, 80, 90, 100],  # <- explicit edges
+)
+def heatmap_edges(axs):
+    ax = axs[0]
+    data = np.random.default_rng(2).integers(50, 96, size=(10, 10))
+    im = ax.imshow(data)
+    ax.figure.colorbar(im, ax=ax, label="Literacy (%)")
+heatmap_edges()
+
+
+@wb_plot(
+    title="Binned Literacy (Quantiles)",
+    subtitle="5 quantile bins, bad to good",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+    palette="wb_seq_bad_to_good",
+    palette_bins=5,
+    palette_bin_mode="quantile"
+)
+def heatmap_quantile(axs):
+    ax = axs[0]
+    data = np.random.default_rng(1).integers(50, 96, size=(15, 15))
+    im = ax.imshow(data)
+    ax.figure.colorbar(im, ax=ax, label="Literacy (%)")
+heatmap_quantile()

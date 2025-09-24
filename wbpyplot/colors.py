@@ -1,10 +1,13 @@
 # colors.py
-import re
-from cycler import cycler
+import numpy as np
 import matplotlib.colors as mcolors
+from cycler import cycler
+from matplotlib.lines import Line2D
+from matplotlib.collections import PathCollection
+from matplotlib.patches import Patch
 
 # -----------------------------------------------------------------------------
-# 1) Palette Registry
+# 1) Palette registry
 # -----------------------------------------------------------------------------
 PALETTES = {
     # categorical colors
@@ -19,7 +22,7 @@ PALETTES = {
         "cat8": "#AA0000",
         "cat9": "#DDDA21",
     },
-    # categorical text (for annotations)
+    # categorical text
     "wb_categorical_text": {
         "cat1Text": "#106CA1",
         "cat2Text": "#B65F0C",
@@ -31,7 +34,7 @@ PALETTES = {
         "cat8Text": "#AA0000",
         "cat9Text": "#767712",
     },
-    # WB region colors (label map)
+    # WB region colors
     "wb_region": {
         "WLD": "#081079",
         "NAC": "#34A7F2",
@@ -44,7 +47,7 @@ PALETTES = {
         "AFE": "#FF9800",
         "AFW": "#DDDA21",
     },
-    # WB region text colors (annotation text only)
+    # WB region text colors
     "wb_region_text": {
         "NACText": "#106CA1",
         "SSFText": "#B65F0C",
@@ -58,7 +61,7 @@ PALETTES = {
         "AFWText": "#767712",
     },
 
-    # Sequential palettes (DICT but should be treated as SEQUENCE)
+    # Sequential palettes
     "wb_seq_bad_to_good": {
         "seq1": "#FDF6DB",
         "seq2": "#A1CBCF",
@@ -74,9 +77,8 @@ PALETTES = {
         "seqRev5": "#691B15",
     },
 
-    # Diverging palettes (DICT but should be treated as SEQUENCE)
+    # Diverging palettes
     "wb_div_default": {
-        # negative → mid → positive (explicit order used in resolver)
         "divNeg3": "#920000",
         "divNeg2": "#BD6126",
         "divNeg1": "#E3A763",
@@ -94,120 +96,191 @@ PALETTES = {
         "div3R2": "#c9573e",
         "div3R3": "#920000",
     },
+
+    # Extras / groups
+    "wb_income": {"HIC": "#016B6C", "UMC": "#73AF48", "LMC": "#DB95D7", "LIC": "#3B4DA6"},
+    "wb_gender": {"male": "#664AB6", "female": "#FF9800", "diverse": "#4EC2C0"},
+    "wb_urbanisation": {"rural": "#54AE89", "urban": "#6D88D1"},
+    "wb_age": {
+        "youngestAge": "#F8A8DF",
+        "youngerAge": "#B38FD8",
+        "middleAge": "#462f98",
+        "olderAge": "#6D88D1",
+        "oldestAge": "#A1C6FF",
+    },
+    "wb_binary": {"yes": "#0071BC", "no": "#EBEEF4"},
+    "wb_total": {"total": "#163C6C"},
+    "wb_reference": {"reference": "#8A969F"},
+    "wb_noData": {"noData": "#CED4DE"},
+    "wb_highlight_selection": {"selection1": "#0071BC", "selection2": "#8963C1"},
+    "wb_text_colors": {"text": "#111111", "textSubtle": "#666666"},
+    "wb_greys": {
+        "grey500": "#111111",
+        "grey400": "#666666",
+        "grey300": "#8a969f",
+        "grey200": "#CED4DE",
+        "grey100": "#EBEEF4",
+    },
+    "wb_seq_monochrome_blue": {
+        "seqB1": "#E3F6FD",
+        "seqB2": "#75CCEC",
+        "seqB3": "#089BD4",
+        "seqB4": "#0169A1",
+        "seqB5": "#023B6F",
+    },
+    "wb_seq_monochrome_yellow": {
+        "seqY1": "#FDF7DB",
+        "seqY2": "#ECB63A",
+        "seqY3": "#BE792B",
+        "seqY4": "#8D4117",
+        "seqY5": "#5C0000",
+    },
+    "wb_seq_monochrome_purple": {
+        "seqP1": "#FFE2FF",
+        "seqP2": "#D3ACE6",
+        "seqP3": "#A37ACD",
+        "seqP4": "#6F4CB4",
+        "seqP5": "#2F1E9C",
+    },
+    "wb_seq_monochrome_green": {
+        "seqG1": "#d2ffe1",
+        "seqG2": "#8ad4a7",
+        "seqG3": "#54a67f",
+        "seqG4": "#27795a",
+        "seqG5": "#084d31",
+    },
+    "wb_seq_monochrome_red": {
+        "seqR1": "#ffd6b9",
+        "seqR2": "#f99c78",
+        "seqR3": "#e56245",
+        "seqR4": "#c1261a",
+        "seqR5": "#870000",
+    },
+    "wb_div_neutral": {
+        "div2L3": "#24768E",
+        "div2L2": "#4EA2AC",
+        "div2L1": "#98CBCC",
+        "div2Mid": "#EFEFEF",
+        "div2R1": "#D1AEE3",
+        "div2R2": "#A873C4",
+        "div2R3": "#754493",
+    },
+    "wb_pillars": {
+        "people": "#f7b841",
+        "planet": "#07ab50",
+        "prosperity": "#872c8f",
+        "infrastructure": "#91302f",
+        "digital": "#5d6472",
+        "corporate": "#004972",
+    },
 }
 
-# -----------------------------------------------------------------------------
-# 2) Companion Text Aliases (annotation-only)
-# -----------------------------------------------------------------------------
+# Companion text palettes (annotation-only)
 COMPANION_TEXT_ALIASES = {
     "wb_region": "wb_region_text",
     "wb_categorical": "wb_categorical_text",
 }
 
-# -----------------------------------------------------------------------------
-# 3) Heuristics & Helpers
-# -----------------------------------------------------------------------------
-_num_suffix = re.compile(r".*?(\d+)$")
+# Which palettes are forced to label-map vs cycle behavior
+LABEL_MAP_ONLY = {
+    "wb_region",
+    "wb_region_secondary",
+    "wb_age",
+    "wb_gender",
+    "wb_income",
+    "wb_binary",
+    "wb_total",
+    "wb_pillars",
+}
+AUTO_CYCLE_ONLY = {
+    "wb_categorical",
+    "wb_categorical_text",
+    "wb_region_text",
+    "wb_reference",
+    "wb_noData",
+    "wb_highlight_selection",
+    "wb_text_colors",
+    "wb_greys",
+    "wb_seq_bad_to_good",
+    "wb_seq_good_to_bad",
+    "wb_seq_monochrome_blue",
+    "wb_seq_monochrome_green",
+    "wb_seq_monochrome_red",
+    "wb_seq_monochrome_yellow",
+    "wb_seq_monochrome_purple",
+    "wb_div_default",
+    "wb_div_neutral",
+    "wb_div_alt",
+}
 
-def _is_hex_color(s): 
+# -----------------------------------------------------------------------------
+# Utility helpers
+# -----------------------------------------------------------------------------
+def _is_hex_color(s):
     return isinstance(s, str) and s.startswith("#") and (len(s) in (4, 7))
 
-def _looks_like_label_map(d: dict) -> bool:
-    """Dict whose values are hex colors and keys are NOT gradient-like."""
-    if not (isinstance(d, dict) and d):
-        return False
-    if not all(_is_hex_color(v) for v in d.values()):
-        return False
-    keys = [str(k).lower() for k in d.keys()]
-    # If ALL keys look like seq*/div* → it's a gradient dict, not a label map
-    if keys and all(k.startswith(("seq", "seqrev", "div")) for k in keys):
-        return False
-    return True
+def _looks_like_label_map(d):
+    return isinstance(d, dict) and d and all(_is_hex_color(v) for v in d.values())
 
-def _dict_is_gradient(d: dict) -> bool:
-    """True if keys are clearly sequential/diverging tokens."""
-    if not isinstance(d, dict) or not d:
-        return False
-    keys = [str(k).lower() for k in d.keys()]
-    return keys and all(k.startswith(("seq", "seqrev", "div")) for k in keys)
+def _looks_like_sequence(x):
+    return isinstance(x, (list, tuple)) and x and all(_is_hex_color(v) for v in x)
 
-def _natural_key(k: str):
-    m = _num_suffix.match(k)
-    if m:
-        return (re.sub(r"\d+$", "", k), int(m.group(1)))
-    return (k, -1)
-
-def _derive_sequence_from_dict(name: str, d: dict[str, str]) -> list[str]:
-    """Turn gradient dict into an ordered list of hex colors."""
-    # Explicit diverging orders (neg → mid → pos)
-    if name == "wb_div_default":
-        order = ["divNeg3","divNeg2","divNeg1","divMid","divPos1","divPos2","divPos3"]
-        return [d[k] for k in order if k in d]
-    if name == "wb_div_alt":
-        order = ["div3L3","div3L2","div3L1","div3Mid","div3R1","div3R2","div3R3"]
-        return [d[k] for k in order if k in d]
-    # Sequential: sort naturally by numeric suffix where present
-    try:
-        keys = sorted(d.keys(), key=_natural_key)
-        return [d[k] for k in keys]
-    except Exception:
-        return list(d.values())
-
-def _resolve_from_registry(palette: str):
-    """Return ('sequence'|'label_map', node) or None."""
+def _resolve_from_registry(palette):
     if not isinstance(palette, str) or not PALETTES:
         return None
     node = PALETTES.get(palette)
     if node is None:
         return None
     if isinstance(node, dict):
-        # Decide sequence vs label_map based on keys or palette name
-        if _dict_is_gradient(node) or ("seq" in palette or "div" in palette):
-            return ("sequence", _derive_sequence_from_dict(palette, node))
+        # If palette name includes seq/div, treat as sequence (gradient list via values order)
+        if ("seq" in palette) or ("div" in palette):
+            return ("sequence", list(node.values()))
         if _looks_like_label_map(node):
             return ("label_map", dict(node))
-        # Fallback: treat as sequence of values
         return ("sequence", list(node.values()))
-    # If someone registers a list/tuple of hex colors
-    if isinstance(node, (list, tuple)) and all(_is_hex_color(v) for v in node):
+    if _looks_like_sequence(node):
         return ("sequence", list(node))
     return None
 
 # -----------------------------------------------------------------------------
-# 4) Public resolver (returns 4-tuple)
+# Public resolver
 # -----------------------------------------------------------------------------
 def resolve_color_cycle_and_label_map(
     palette=None,
     n=None,
 ):
     """
-    Returns (cycle_or_None, label_map_or_None, text_map_or_None, cmap_or_None).
-
-    - Label-map palettes -> (None, label_map, maybe_text_map, None)
-    - Sequence palettes -> (cycler, None, None, maybe_cmap)
-      If name contains 'seq' or 'div' (or keys look gradient-like),
-      a Colormap object is BUILT and returned (no global registration).
+    Returns (cycler_or_None, label_map_or_None, text_map_or_None, cmap_or_None).
     """
+    def _force_mode(name: str, reg_tuple):
+        if name in LABEL_MAP_ONLY and reg_tuple and reg_tuple[0] == "label_map":
+            return ("label_map", reg_tuple[1])
+        if name in AUTO_CYCLE_ONLY and reg_tuple and reg_tuple[0] == "sequence":
+            return ("sequence", reg_tuple[1])
+        return reg_tuple
+
     reg = _resolve_from_registry(palette) if isinstance(palette, str) else None
+    reg = _force_mode(palette, reg) if isinstance(palette, str) else reg
+
     if reg is None:
         return None, None, None, None
 
     kind, node = reg
 
-    # Build a local Colormap object for gradient palettes
+    # Build a Colormap object for sequential/diverging palettes
     cmap = None
     if isinstance(palette, str) and ("seq" in palette or "div" in palette):
         try:
-            seq = list(node)  # node is a list of hex colors for sequences
+            seq = list(node)  # node is already an ordered list of hex colors
             cmap = mcolors.LinearSegmentedColormap.from_list(palette, seq, N=256)
         except Exception:
             cmap = None
 
     if kind == "sequence":
-        seq = list(node)
+        colors = list(node)
         if n is not None:
-            seq = seq[: int(n)]
-        return cycler(color=seq), None, None, cmap
+            colors = colors[: int(n)]
+        return cycler(color=colors), None, None, cmap
 
     if kind == "label_map":
         text_map = None
@@ -219,17 +292,16 @@ def resolve_color_cycle_and_label_map(
     return None, None, None, None
 
 # -----------------------------------------------------------------------------
-# 5) Application helpers
+# Application helpers: recolor & legend markers
 # -----------------------------------------------------------------------------
 def apply_color_map_to_axes(axs, label_map: dict[str, str]) -> None:
-    """Recolor artists on Axes based on label → color mapping."""
     for ax in axs:
         # Lines
         for line in ax.get_lines():
             lbl = line.get_label()
             if lbl in label_map:
                 line.set_color(label_map[lbl])
-        # Patches (bars, wedges, etc.)
+        # Patches (bars, wedges)
         for patch in ax.patches:
             lbl = getattr(patch, "get_label", lambda: None)()
             if lbl in label_map:
@@ -244,7 +316,6 @@ def apply_color_map_to_axes(axs, label_map: dict[str, str]) -> None:
                     pass
 
 def apply_annotation_text_colors(axs, text_map: dict[str, str]) -> None:
-    """Color ONLY annotation text (ax.text), not legend text."""
     for ax in axs:
         for t in ax.texts:
             txt = t.get_text()
@@ -255,11 +326,6 @@ def apply_annotation_text_colors(axs, text_map: dict[str, str]) -> None:
                     pass
 
 def apply_legend_marker_colors(axs, label_map: dict[str, str]) -> None:
-    """Ensure legend markers reflect the main palette; legend text unchanged."""
-    from matplotlib.lines import Line2D
-    from matplotlib.collections import PathCollection
-    from matplotlib.patches import Patch
-
     for ax in axs:
         leg = ax.get_legend()
         if leg is None:
@@ -278,8 +344,139 @@ def apply_legend_marker_colors(axs, label_map: dict[str, str]) -> None:
                     h.set_facecolor(c)
                     h.set_edgecolor(c)
                 except Exception:
-                    try: h.set_color(c)
-                    except Exception: pass
+                    try:
+                        h.set_color(c)
+                    except Exception:
+                        pass
             elif isinstance(h, Patch):
                 h.set_facecolor(c)
                 h.set_edgecolor(c)
+
+# -----------------------------------------------------------------------------
+# Continuous -> binned helpers + colorbar handling
+# -----------------------------------------------------------------------------
+def build_binned_cmap_and_norm_from_axes(axs, cmap, bins, mode="linear"):
+    """
+    Build (ListedColormap, BoundaryNorm) for all mappables on the given axes.
+    bins : int -> number of bins (uniform/quantile)
+           sequence -> explicit bin edges
+    """
+    arrays = []
+    for ax in axs:
+        # images (imshow)
+        for im in getattr(ax, "images", []):
+            arr = getattr(im, "get_array", lambda: None)()
+            if arr is not None:
+                arr = np.asarray(arr)
+                if arr.size:
+                    arrays.append(arr)
+        # collections (pcolormesh, contourf -> QuadMesh, PolyCollection)
+        for coll in ax.collections:
+            arr = getattr(coll, "get_array", lambda: None)()
+            if arr is not None:
+                arr = np.asarray(arr)
+                if arr.size:
+                    arrays.append(arr)
+
+    if not arrays:
+        return None, None
+    data = np.concatenate([a.ravel() for a in arrays])
+    data = data[np.isfinite(data)]
+    if data.size == 0:
+        return None, None
+
+    # Compute edges
+    if hasattr(bins, "__iter__"):
+        edges = np.asarray(list(bins), dtype=float)
+        if edges.ndim != 1 or edges.size < 2:
+            return None, None
+        nbins = edges.size - 1
+    elif isinstance(bins, int) and bins > 0:
+        nbins = int(bins)
+        if str(mode).lower() == "quantile":
+            qs = np.linspace(0, 1, nbins + 1)
+            edges = np.quantile(data, qs)
+        else:  # linear
+            dmin, dmax = float(np.nanmin(data)), float(np.nanmax(data))
+            if not np.isfinite(dmin) or not np.isfinite(dmax) or dmin == dmax:
+                return None, None
+            edges = np.linspace(dmin, dmax, nbins + 1)
+    else:
+        return None, None
+
+    # Sample original cmap at bin centers -> discrete colors
+    centers = 0.5 * (edges[:-1] + edges[1:])
+    t = (centers - centers.min()) / (centers.max() - centers.min() + 1e-12)
+    colors = cmap(t)
+
+    listed = mcolors.ListedColormap(colors, name=getattr(cmap, "name", "binned"))
+    norm = mcolors.BoundaryNorm(edges, ncolors=listed.N, clip=True)
+    return listed, norm
+
+def apply_cmap_to_mappables(axs, cmap, norm=None, force_recreate_cb=True):
+    """
+    Apply cmap/norm to imshow/pcolormesh/contourf outputs and refresh colorbars.
+    If mappable uses BoundaryNorm and a colorbar already exists, we recreate it
+    to guarantee discrete rendering.
+    """
+    if cmap is None and norm is None:
+        return
+
+    updated = []
+    for ax in axs:
+        # images
+        for im in getattr(ax, "images", []):
+            try:
+                if cmap is not None:
+                    im.set_cmap(cmap)
+                if norm is not None:
+                    im.set_norm(norm)
+                updated.append(im)
+            except Exception:
+                pass
+        # collections (QuadMesh, PolyCollection, etc.)
+        for coll in ax.collections:
+            if hasattr(coll, "set_cmap"):
+                try:
+                    if cmap is not None:
+                        coll.set_cmap(cmap)
+                    if norm is not None and hasattr(coll, "set_norm"):
+                        coll.set_norm(norm)
+                    updated.append(coll)
+                except Exception:
+                    pass
+
+    # update existing colorbars; recreate if needed for BoundaryNorm
+    for m in updated:
+        cb = getattr(m, "colorbar", None)  # set by fig.colorbar/plt.colorbar
+        if cb is None:
+            continue
+
+        # Try updating in-place first
+        try:
+            cb.update_normal(m)
+        except Exception:
+            pass
+
+        if not force_recreate_cb:
+            continue
+
+        # If discrete norm, rebuild the colorbar so it shows discrete patches
+        mnorm = getattr(m, "norm", None)
+        if isinstance(mnorm, mcolors.BoundaryNorm):
+            try:
+                ax = m.axes
+                fig = ax.figure
+                # Keep existing label, orientation, etc., as best-effort
+                label = cb.ax.get_ylabel()
+                orientation = getattr(cb, "orientation", "vertical")
+                cb.remove()
+                new_cb = fig.colorbar(m, ax=ax, orientation=orientation)
+                if label:
+                    new_cb.set_label(label)
+            except Exception:
+                # fall back to update only
+                try:
+                    cb.update_normal(m)
+                except Exception:
+                    pass
