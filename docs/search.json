@@ -65,15 +65,29 @@
   {
     "objectID": "reference/example.html",
     "href": "reference/example.html",
-    "title": "Function reference",
+    "title": "Getting Started",
     "section": "",
-    "text": "wb_plot\nCreate a standardized Matplotlib theme via a decorator for the World Bank with consistent styling,"
+    "text": "matplotlib is a widely used package for creating visualizations in Python. The wbpyplotpackage contains a decorator function to apply the World Bank data visualization style to matplotlibvisualizations. You can find the underlying code to generate this theme at htps://github.com/worldbank/wbpyplot. The data visualization style guide can be found at https://wbg-vis-design.vercel.app/."
   },
   {
-    "objectID": "reference/example.html#wbpyplot",
-    "href": "reference/example.html#wbpyplot",
-    "title": "Function reference",
+    "objectID": "reference/example.html#wbpyplot-python-package",
+    "href": "reference/example.html#wbpyplot-python-package",
+    "title": "Getting Started",
     "section": "",
-    "text": "wb_plot\nCreate a standardized Matplotlib theme via a decorator for the World Bank with consistent styling,"
+    "text": "matplotlib is a widely used package for creating visualizations in Python. The wbpyplotpackage contains a decorator function to apply the World Bank data visualization style to matplotlibvisualizations. You can find the underlying code to generate this theme at htps://github.com/worldbank/wbpyplot. The data visualization style guide can be found at https://wbg-vis-design.vercel.app/."
+  },
+  {
+    "objectID": "reference/example.html#installation",
+    "href": "reference/example.html#installation",
+    "title": "Getting Started",
+    "section": "Installation",
+    "text": "Installation\nThe package is still under active development and is not yet available on PyPi. Installation instructions are provided in the GitHub repo."
+  },
+  {
+    "objectID": "reference/example.html#using-the-package",
+    "href": "reference/example.html#using-the-package",
+    "title": "Getting Started",
+    "section": "Using the package",
+    "text": "Using the package\n\nfrom wbpyplot import wb_plot\nimport numpy as np \n\nWith the package loaded into your Python session, you can add the @wb_plot decorator to your matplotlib graph to style it. It will turn this…\n\nimport matplotlib.pyplot as plt\n\ndef scatter_plot(axs):\n    np.random.seed(0)\n    x = np.random.normal(50000, 15000, 100)\n    y = np.random.normal(75, 10, 100)\n\n    axs.scatter(x, y, label=\"Countries\")\n    axs.set_xlabel(\"GDP per capita (USD)\")\n    axs.set_ylabel(\"Life expectancy (years)\")\n    axs.legend()\n\nfig, ax = plt.subplots()\n\nscatter_plot(ax)\n\nplt.show()\n\n\n\n\n\n\n\n\ninto this!\n\nScatterplot\n\n@wb_plot(\n    title=\"GDP vs Life Expectancy\",\n    subtitle=\"Scatterplot of synthetic data\",\n    note=[(\"Source:\", \"World Bank (fictional).\")],\n)\ndef scatter_plot(axs):\n    np.random.seed(0)\n    x = np.random.normal(50000, 15000, 100)\n    y = np.random.normal(75, 10, 100)\n\n    axs[0].scatter(x, y, label=\"Countries\")\n    axs[0].set_xlabel(\"GDP per capita (USD)\")\n    axs[0].set_ylabel(\"Life expectancy (years)\")\n\n\nscatter_plot()\n\n\n\n\n\n\n\n\nHere are few more examples:\n\n\nBar graph\n\n@wb_plot(\n    title=\"Employment by Sector\",\n    subtitle=\"Distribution across sectors in 2024\",\n    note=[(\"Source:\", \"World Bank, 2024 dataset.\")],\n)\ndef bar_plot(axs):\n    sectors = [\"Agriculture\", \"Industry\", \"Services\"]\n    values = [22, 30, 48]\n\n    ax = axs[0]\n    bars = ax.bar(sectors, values, label=\"Share of employment\")\n\n    ax.set_ylabel(\"Percentage (%)\")\n    ax.set_xlabel(\"Sector\")\n\n\nbar_plot()\n\n\n\n\n\n\n\n\n\n@wb_plot(\n    title=\"Employment by Sector\",\n    subtitle=\"Distribution across sectors in 2024\",\n    note=[(\"Source:\", \"World Bank, 2024 dataset.\")],\n)\ndef bar_plot(axs):\n    sectors = [\"Agriculture\", \"Industry\", \"Services\"]\n    values = [22, 30, 48]\n\n    ax = axs[0]\n    bars = ax.barh(sectors, values, label=\"Share of employment\")\n\n    ax.set_ylabel(\"Percentage (%)\")\n    ax.set_xlabel(\"Sector\")\n\n\nbar_plot()\n\n\n\n\n\n\n\n\n\n\nHeatmap\n\n@wb_plot(\n    title=\"Binned with Explicit Thresholds\",\n    subtitle=\"Custom edges: [50, 60, 70, 80, 90, 100]\",\n    note=[(\"Source:\", \"World Bank, 2024 dataset.\")],\n    palette=\"wb_seq_bad_to_good\",\n    palette_bins=[50, 60, 70, 80, 90, 100],  # &lt;- explicit edges\n)\ndef heatmap_edges(axs):\n    ax = axs[0]\n    data = np.random.default_rng(2).integers(50, 96, size=(10, 10))\n    im = ax.imshow(data)\n    ax.figure.colorbar(im, ax=ax, label=\"Literacy (%)\")\n    ax.set_position([0.1, 0.1, 0.8, 0.8])\n\n\nheatmap_edges()"
   }
 ]
