@@ -2,12 +2,16 @@ project:
   type: website
   output-dir: docs 
 
+format:
+  html:
+    theme: cosmo
+
 website:
   title: "wbpyplot"
   site-url: https://worldbank.github.io/wbpyplot
   navbar:
     left:
-      - href: index.qmd
+      - href: index.md
         text: Home
       - text: Reference
         href: reference/index.qmd
