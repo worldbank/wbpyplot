@@ -10,7 +10,7 @@ requires-python = ">=3.9.6"
 dependencies = [
     "pyfonts>=1.0.0",
     "cycler",
-    "pypalettes>=0.1.6",
+    "pypalettes",
     "matplotlib",
     "morethemes>=0.3.1",
     "seaborn>=0.13.2",
