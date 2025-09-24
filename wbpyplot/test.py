@@ -1,4 +1,4 @@
-from .decorator import wb_plot
+from decorator import wb_plot
 import numpy as np 
 
 @wb_plot(
@@ -77,3 +77,69 @@ def bar_plot(axs):
     ax.set_xlabel("Sector")
 
 bar_plot()
+
+
+@wb_plot(
+    title="Literacy Rate by Country",
+    subtitle="Sequential palette example (bad to good)",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+    palette="wb_seq_bad_to_good"
+)
+def seq_heatmap(axs):
+    # Fake literacy data for 5 countries over 5 years
+    countries = ["A", "B", "C", "D", "E"]
+    years = ["2018", "2019", "2020", "2021", "2022"]
+    values = np.array([
+        [55, 57, 60, 62, 65],
+        [65, 67, 69, 71, 74],
+        [72, 74, 76, 78, 80],
+        [80, 82, 84, 86, 88],
+        [92, 93, 94, 95, 96],
+    ])
+
+    ax = axs[0]
+    im = ax.imshow(values)
+
+    # Add labels
+    ax.set_xticks(np.arange(len(years)))
+    ax.set_yticks(np.arange(len(countries)))
+    ax.set_xticklabels(years)
+    ax.set_yticklabels(countries)
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Country")
+
+    fig = ax.figure
+    cbar = fig.colorbar(im, ax=ax)
+    cbar.set_label("Literacy Rate (%)")
+
+seq_heatmap()
+
+@wb_plot(
+    title="Binned with Explicit Thresholds",
+    subtitle="Custom edges: [50, 60, 70, 80, 90, 100]",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+    palette="wb_seq_bad_to_good",
+    palette_bins=[50, 60, 70, 80, 90, 100],  # <- explicit edges
+)
+def heatmap_edges(axs):
+    ax = axs[0]
+    data = np.random.default_rng(2).integers(50, 96, size=(10, 10))
+    im = ax.imshow(data)
+    ax.figure.colorbar(im, ax=ax, label="Literacy (%)")
+heatmap_edges()
+
+
+@wb_plot(
+    title="Binned Literacy (Quantiles)",
+    subtitle="5 quantile bins, bad to good",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+    palette="wb_seq_bad_to_good",
+    palette_bins=5,
+    palette_bin_mode="quantile"
+)
+def heatmap_quantile(axs):
+    ax = axs[0]
+    data = np.random.default_rng(1).integers(50, 96, size=(15, 15))
+    im = ax.imshow(data)
+    ax.figure.colorbar(im, ax=ax, label="Literacy (%)")
+heatmap_quantile()
