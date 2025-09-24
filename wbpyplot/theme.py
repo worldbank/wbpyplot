@@ -16,11 +16,12 @@ def set_font_family(file):
 
 wb_rcparams = {
     "font.family": set_font_family("OpenSans.ttf"),
+    "axes.titleweight": "bold",
     "axes.edgecolor": "none",
     "axes.grid": True,
     "grid.color": "#CED4DE",
     "grid.linestyle": (0, (4, 2)),
-    "grid.linewidth": 1.0,
+    "grid.linewidth": 0.85,
     "xtick.direction": "out",
     "ytick.direction": "out",
     "legend.frameon": False,
