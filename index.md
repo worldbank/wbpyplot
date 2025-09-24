@@ -23,10 +23,6 @@ For example:
 
 ```
 @wb_plot(
-    width=800,
-    height=500,
-    dpi=100,
-    save_path=None,
     title="Government Investment in Key Sectors",
     subtitle="Spending from 2018 to 2024 (adjusted for inflation)",
     note=[
