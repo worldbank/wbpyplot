@@ -1,9 +1,127 @@
-# Function reference {.doc .doc-index}
+# Getting Started
 
-## wbpyplot
+## `wbpyplot` Python package
+
+`matplotlib` is a widely used package for creating visualizations in Python. The `wbpyplot `package contains a decorator function to apply the World Bank data visualization style to `matplotlib`visualizations. You can find the underlying code to generate this theme at htps://github.com/worldbank/wbpyplot. The data visualization style guide can be found at https://wbg-vis-design.vercel.app/.
 
 
+## Installation
+The package is still under active development and is not yet available on PyPi. Installation instructions are provided in the GitHub repo. 
 
-| | |
-| --- | --- |
-| [wb_plot](wb_plot.qmd#wbpyplot.wb_plot) | Create a standardized Matplotlib theme via a decorator for the World Bank with consistent styling, |
+## Using the package
+
+```{python}
+from wbpyplot import wb_plot
+import numpy as np 
+```
+
+With the package loaded into your Python session, you can add the `@wb_plot` decorator to your `matplotlib` graph to style it. It will turn this...
+
+```{python}
+import matplotlib.pyplot as plt
+
+def scatter_plot(axs):
+    np.random.seed(0)
+    x = np.random.normal(50000, 15000, 100)
+    y = np.random.normal(75, 10, 100)
+
+    axs.scatter(x, y, label="Countries")
+    axs.set_xlabel("GDP per capita (USD)")
+    axs.set_ylabel("Life expectancy (years)")
+    axs.legend()
+
+fig, ax = plt.subplots()
+
+scatter_plot(ax)
+
+plt.show()
+```
+
+into this!
+
+### Scatterplot 
+
+```{python}
+@wb_plot(
+    title="GDP vs Life Expectancy",
+    subtitle="Scatterplot of synthetic data",
+    note=[("Source:", "World Bank (fictional).")],
+)
+def scatter_plot(axs):
+    np.random.seed(0)
+    x = np.random.normal(50000, 15000, 100)
+    y = np.random.normal(75, 10, 100)
+
+    axs[0].scatter(x, y, label="Countries")
+    axs[0].set_xlabel("GDP per capita (USD)")
+    axs[0].set_ylabel("Life expectancy (years)")
+
+
+scatter_plot()
+```
+
+
+Here are few more examples:
+
+### Bar graph
+
+```{python}
+@wb_plot(
+    title="Employment by Sector",
+    subtitle="Distribution across sectors in 2024",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+)
+def bar_plot(axs):
+    sectors = ["Agriculture", "Industry", "Services"]
+    values = [22, 30, 48]
+
+    ax = axs[0]
+    bars = ax.bar(sectors, values, label="Share of employment")
+
+    ax.set_ylabel("Percentage (%)")
+    ax.set_xlabel("Sector")
+
+
+bar_plot()
+```
+
+```{python}
+@wb_plot(
+    title="Employment by Sector",
+    subtitle="Distribution across sectors in 2024",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+)
+def bar_plot(axs):
+    sectors = ["Agriculture", "Industry", "Services"]
+    values = [22, 30, 48]
+
+    ax = axs[0]
+    bars = ax.barh(sectors, values, label="Share of employment")
+
+    ax.set_ylabel("Percentage (%)")
+    ax.set_xlabel("Sector")
+
+
+bar_plot()
+```
+
+### Heatmap
+
+```{python}
+@wb_plot(
+    title="Binned with Explicit Thresholds",
+    subtitle="Custom edges: [50, 60, 70, 80, 90, 100]",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+    palette="wb_seq_bad_to_good",
+    palette_bins=[50, 60, 70, 80, 90, 100],  # <- explicit edges
+)
+def heatmap_edges(axs):
+    ax = axs[0]
+    data = np.random.default_rng(2).integers(50, 96, size=(10, 10))
+    im = ax.imshow(data)
+    ax.figure.colorbar(im, ax=ax, label="Literacy (%)")
+    ax.set_position([0.1, 0.1, 0.8, 0.8])
+
+
+heatmap_edges()
+```
