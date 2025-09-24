@@ -6,14 +6,102 @@ from theme import get_dynamic_sizes, wb_rcparams
 from layout import render_title_subtitle_note, compute_total_bottom_margin
 from legend import render_legend_below_plot, should_suppress_legend
 from axis import apply_axis_styling, detect_chart_type, tidy_numeric_ticks
+# from .number_formatting import format_number  # optional
+
 from colors import (
     resolve_color_cycle_and_label_map,  # (cycle, label_map, text_map, cmap)
     apply_color_map_to_axes,
     apply_annotation_text_colors,
     apply_legend_marker_colors,
-    apply_cmap_to_mappables
 )
-# from .number_formatting import format_number
+
+# --------------------------------------------------------------------
+# Helpers for applying colormaps (continuous or binned)
+# --------------------------------------------------------------------
+def _apply_cmap_to_mappables(axs, cmap, norm=None):
+    """Apply cmap (and optional norm) to imshow/pcolormesh/contourf outputs."""
+    if cmap is None and norm is None:
+        return
+    for ax in axs:
+        # Images (imshow)
+        for im in getattr(ax, "images", []):
+            try:
+                if cmap is not None: im.set_cmap(cmap)
+                if norm is not None: im.set_norm(norm)
+            except Exception:
+                pass
+        # Collections (pcolormesh, contourf -> QuadMesh, PolyCollection, etc.)
+        for coll in ax.collections:
+            if hasattr(coll, "set_cmap"):
+                try:
+                    if cmap is not None: coll.set_cmap(cmap)
+                    if norm is not None and hasattr(coll, "set_norm"):
+                        coll.set_norm(norm)
+                except Exception:
+                    pass
+
+def _extract_data_from_mappable(m):
+    """Best-effort extract of numeric array from an image/collection for binning."""
+    arr = None
+    if hasattr(m, "get_array"):
+        try:
+            arr = m.get_array()
+            if arr is not None:
+                arr = np.asarray(arr)
+        except Exception:
+            arr = None
+    return arr
+
+def _build_binned_cmap_and_norm_from_axes(axs, cmap, bins, mode):
+    """Create a (ListedColormap, BoundaryNorm) from a continuous cmap."""
+    import matplotlib.colors as mcolors
+
+    arrays = []
+    for ax in axs:
+        for im in getattr(ax, "images", []):
+            arr = _extract_data_from_mappable(im)
+            if arr is not None and arr.size > 0:
+                arrays.append(arr)
+        for coll in ax.collections:
+            arr = _extract_data_from_mappable(coll)
+            if arr is not None and arr.size > 0:
+                arrays.append(arr)
+
+    if not arrays:
+        return None, None
+
+    data = np.concatenate([a.ravel() for a in arrays if np.isfinite(a).any()])
+    data = data[np.isfinite(data)]
+    if data.size == 0:
+        return None, None
+
+    # Compute bin edges
+    if hasattr(bins, "__iter__"):
+        edges = np.asarray(list(bins), dtype=float)
+        if edges.ndim != 1 or edges.size < 2:
+            return None, None
+        nbins = edges.size - 1
+    elif isinstance(bins, int) and bins > 0:
+        nbins = bins
+        if mode == "quantile":
+            qs = np.linspace(0, 1, nbins + 1)
+            edges = np.quantile(data, qs)
+        else:  # linear
+            dmin, dmax = np.nanmin(data), np.nanmax(data)
+            if not np.isfinite(dmin) or not np.isfinite(dmax) or dmin == dmax:
+                return None, None
+            edges = np.linspace(dmin, dmax, nbins + 1)
+    else:
+        return None, None
+
+    # Colors at bin centers
+    centers = 0.5 * (edges[:-1] + edges[1:])
+    t = (centers - centers.min()) / (centers.max() - centers.min() + 1e-12)
+    sample_colors = cmap(t)
+
+    listed = mcolors.ListedColormap(sample_colors, name=getattr(cmap, "name", "binned"))
+    norm = mcolors.BoundaryNorm(edges, ncolors=listed.N, clip=True)
+    return listed, norm
 
 
 def wb_plot(
@@ -28,9 +116,19 @@ def wb_plot(
     note=None,
     *,
     palette=None,
-    palettes=None,
-    palette_n=None
+    palette_n=None,
+    palette_bins=None,           # None | int | sequence of edges
+    palette_bin_mode="linear",   # "linear" | "quantile"
 ):
+    """
+    Standardizes/stylizes Matplotlib plots (layout, titles, legends, export)
+    and applies color logic:
+
+    - Discrete (cycle) palettes: set axes.prop_cycle.
+    - Label-map palettes: recolor artists by label (and legend markers).
+    - Sequential/diverging palettes: build a Colormap object; if `palette_bins`
+      is provided, discretize into bins (linear or quantile).
+    """
     def decorator(plot_func):
         @wraps(plot_func)
         def wrapper(*args, **kwargs):
@@ -45,19 +143,31 @@ def wb_plot(
             )
             axs = axs.flatten() if isinstance(axs, (list, np.ndarray)) else [axs]
 
+            # --- Resolve colors ---
             cycle, label_map, text_map, cmap = resolve_color_cycle_and_label_map(
                 palette=palette,
-                palettes=palettes,
-                n=palette_n
+                n=palette_n,
             )
 
             if cycle is not None:
                 for ax in axs:
                     ax.set_prop_cycle(cycle)
 
+            # === User plotting ===
             plot_func(axs, *args, **kwargs)
 
-            apply_cmap_to_mappables(axs, cmap)
+            # If cmap and binning requested
+            binned_cmap, binned_norm = (None, None)
+            if cmap is not None and palette_bins is not None:
+                binned_cmap, binned_norm = _build_binned_cmap_and_norm_from_axes(
+                    axs, cmap, bins=palette_bins, mode=str(palette_bin_mode or "linear").lower()
+                )
+
+            _apply_cmap_to_mappables(
+                axs,
+                binned_cmap if binned_cmap is not None else cmap,
+                norm=binned_norm,
+            )
 
             if label_map:
                 apply_color_map_to_axes(axs, label_map)
@@ -70,16 +180,6 @@ def wb_plot(
                 chart_type = detect_chart_type(ax)
                 apply_axis_styling(ax, font_sizes, spacing, chart_type)
                 tidy_numeric_ticks(ax, max_ticks=5)
-
-            # --- Optional number formatting (commented out) ---
-            # def try_format(value):
-            #     try: return format_number(value)
-            #     except Exception: return value
-            # y_labels = ax.get_yticks()
-            # ax.set_yticklabels([try_format(y) for y in y_labels])
-            # if chart_type != 'timeseries' or chart_type != 'scatter':
-            #     x_labels = ax.get_xticks()
-            #     ax.set_xticklabels([try_format(x) for x in x_labels])
 
             fig.canvas.draw()
             handles, labels = axs[0].get_legend_handles_labels()
@@ -98,6 +198,7 @@ def wb_plot(
 
             if axs[0].get_legend():
                 axs[0].get_legend().remove()
+
             fig.canvas.draw()
 
             if show_legend:
