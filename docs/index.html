@@ -95,6 +95,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./reference/index.html"> 
 <span class="menu-text">Reference</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./reference/example.html"> 
+<span class="menu-text">Getting Started</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -129,10 +133,6 @@ ul.task-list li input[type="checkbox"] {
 <p><code>wb_plot</code> is the mai function decorator which styles all <code>matplotlib</code> (and derivatives, such as <code>seaborn</code>). Add it on top of a function calling <code>matlotlib</code> elements.</p>
 <p>For example:</p>
 <pre><code>@wb_plot(
-    width=800,
-    height=500,
-    dpi=100,
-    save_path=None,
     title="Government Investment in Key Sectors",
     subtitle="Spending from 2018 to 2024 (adjusted for inflation)",
     note=[
