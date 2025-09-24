@@ -7,11 +7,13 @@ from layout import render_title_subtitle_note, compute_total_bottom_margin
 from legend import render_legend_below_plot, should_suppress_legend
 from axis import apply_axis_styling, detect_chart_type, tidy_numeric_ticks
 from colors import (
-    resolve_color_cycle_and_label_map,
+    resolve_color_cycle_and_label_map,  # (cycle, label_map, text_map, cmap)
     apply_color_map_to_axes,
     apply_annotation_text_colors,
     apply_legend_marker_colors,
+    apply_cmap_to_mappables
 )
+# from .number_formatting import format_number
 
 
 def wb_plot(
@@ -24,15 +26,11 @@ def wb_plot(
     title=None,
     subtitle=None,
     note=None,
-    palette='categorical',
+    *,
+    palette=None,
     palettes=None,
-    palette_n=None,
-    palette_kwargs=None,
+    palette_n=None
 ):
-    """
-    Decorator to standardize and stylize matplotlib plots with consistent
-    styling, layout, titles, legends, optional export, and color palettes.
-    """
     def decorator(plot_func):
         @wraps(plot_func)
         def wrapper(*args, **kwargs):
@@ -47,30 +45,27 @@ def wb_plot(
             )
             axs = axs.flatten() if isinstance(axs, (list, np.ndarray)) else [axs]
 
-            # --- Resolve palette (cycle, label map, text map)
-            cycle, label_map, text_map = resolve_color_cycle_and_label_map(
+            cycle, label_map, text_map, cmap = resolve_color_cycle_and_label_map(
                 palette=palette,
                 palettes=palettes,
-                n=palette_n,
-                palette_kwargs=palette_kwargs,
+                n=palette_n
             )
+
             if cycle is not None:
                 for ax in axs:
                     ax.set_prop_cycle(cycle)
 
-            # --- User plotting
             plot_func(axs, *args, **kwargs)
 
-            # --- Apply label-based recoloring
+            apply_cmap_to_mappables(axs, cmap)
+
             if label_map:
                 apply_color_map_to_axes(axs, label_map)
                 apply_legend_marker_colors(axs, label_map)
 
-            # --- Apply annotation text colors (NOT legend text)
             if text_map:
                 apply_annotation_text_colors(axs, text_map)
 
-            # --- Style axes
             for ax in axs:
                 chart_type = detect_chart_type(ax)
                 apply_axis_styling(ax, font_sizes, spacing, chart_type)
@@ -78,31 +73,26 @@ def wb_plot(
 
             # --- Optional number formatting (commented out) ---
             # def try_format(value):
-            #     try:
-            #         return format_number(value)
-            #     except Exception:
-            #         return value
-            #
-            # # Format Y-axis
+            #     try: return format_number(value)
+            #     except Exception: return value
             # y_labels = ax.get_yticks()
             # ax.set_yticklabels([try_format(y) for y in y_labels])
-            #
-            # # Format X-axis (only if not timeseries/scatter)
             # if chart_type != 'timeseries' or chart_type != 'scatter':
             #     x_labels = ax.get_xticks()
             #     ax.set_xticklabels([try_format(x) for x in x_labels])
 
             fig.canvas.draw()
             handles, labels = axs[0].get_legend_handles_labels()
+
             if should_suppress_legend(handles, labels):
                 handles, labels = [], []
             show_legend = bool(handles)
 
             y_top, note_margin_frac, x_margin_frac = render_title_subtitle_note(
-                fig, title, subtitle, note, font_sizes, spacing,
+                fig, title, subtitle, note, font_sizes, spacing
             )
             total_bottom_margin_frac = compute_total_bottom_margin(
-                fig, axs, handles, note, note_margin_frac, spacing,
+                fig, axs, handles, note, note_margin_frac, spacing
             )
             fig.subplots_adjust(top=y_top, bottom=total_bottom_margin_frac)
 
