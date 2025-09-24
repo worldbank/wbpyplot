@@ -11,7 +11,6 @@ wb_plot(
     title=None,
     subtitle=None,
     note=None,
-    *,
     palette=None,
     palette_n=None,
     palette_bins=None,

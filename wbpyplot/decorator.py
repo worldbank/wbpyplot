@@ -28,11 +28,10 @@ def wb_plot(
     title=None,
     subtitle=None,
     note=None,
-    *,
     palette=None,
     palette_n=None,
-    palette_bins=None,  # None | int | sequence of edges
-    palette_bin_mode="linear",  # "linear" | "quantile"
+    palette_bins=None,
+    palette_bin_mode="linear", 
 ):
     """
     Create a standardized Matplotlib theme via a decorator for the World Bank with consistent styling,
