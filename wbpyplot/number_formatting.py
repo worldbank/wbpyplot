@@ -1,17 +1,18 @@
 def format_number(value, unit=None, is_percent=False, is_currency=False):
-
     if not isinstance(value, (int, float)):
         return str(value)
-    if isinstance(value, (int, float)) and 1000 <= value <= 2100 and float(value).is_integer():
+    if (
+        isinstance(value, (int, float))
+        and 1000 <= value <= 2100
+        and float(value).is_integer()
+    ):
         return str(int(value))
 
     abs_val = abs(value)
     suffix = ""
     scaled_val = value
 
-    special_units = {
-        "watt": "w", "tons": "t", "bits": "b", "bytes": "B"
-    }
+    special_units = {"watt": "w", "tons": "t", "bits": "b", "bytes": "B"}
 
     if abs_val >= 1_000_000_000:
         scaled_val = value / 1_000_000_000

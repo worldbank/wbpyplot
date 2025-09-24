@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 
 [[package]]
@@ -369,6 +369,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pypalettes"
+version = "0.1.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "matplotlib" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e3/c5/c0b05f74220fd3dc824d5df3b4583631d79d534aa443721b66acf5ca1155/pypalettes-0.1.6.tar.gz", hash = "sha256:c11a2e0d45de7c4333c602e49209807e62d88226f2b777ad47f584256c5c0cbe", size = 14527437, upload-time = "2025-06-27T14:17:41.242Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/81/a1/847f1e0a625130a2919f2b85e71c5196f5ba1a9e45cd77dffbf82492aa52/pypalettes-0.1.6-py3-none-any.whl", hash = "sha256:ad1ce4c79aa07afbb4fc1d91e4e914ab2d9a301d898c1241cdc8f8c0bffc64bf", size = 366236, upload-time = "2025-06-27T14:17:39.108Z" },
+]
+
+[[package]]
 name = "pyparsing"
 version = "3.2.3"
 source = { registry = "https://pypi.org/simple" }
@@ -459,16 +471,20 @@ name = "wbpyplot"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "cycler" },
     { name = "matplotlib" },
     { name = "morethemes" },
     { name = "pyfonts" },
+    { name = "pypalettes" },
     { name = "seaborn" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "cycler" },
     { name = "matplotlib" },
     { name = "morethemes", specifier = ">=0.3.1" },
     { name = "pyfonts", specifier = ">=1.0.0" },
+    { name = "pypalettes", specifier = ">=0.1.6" },
     { name = "seaborn", specifier = ">=0.13.2" },
 ]
