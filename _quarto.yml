@@ -1,0 +1,18 @@
+project:
+  type: website
+  output-dir: docs 
+
+website:
+  title: "wbpyplot"
+  site-url: https://worldbank.github.io/wbpyplot
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: Reference
+        href: reference/index.qmd
+
+quartodoc:
+  style: pkgdown
+  dir: reference
+  package: wbpyplot

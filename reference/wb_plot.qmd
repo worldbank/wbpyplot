@@ -1,0 +1,30 @@
+# wb_plot { #wbpyplot.wb_plot }
+
+```python
+wb_plot(
+    width=600,
+    height=500,
+    dpi=100,
+    nrows=1,
+    ncols=1,
+    save_path=None,
+    title=None,
+    subtitle=None,
+    note=None,
+    *,
+    palette=None,
+    palette_n=None,
+    palette_bins=None,
+    palette_bin_mode='linear',
+)
+```
+
+Standardizes/stylizes Matplotlib plots (layout, titles, legends, export)
+and applies color logic:
+
+- Discrete (cycle) palettes: set axes.prop_cycle before plotting.
+- Label-map palettes: recolor artists by label (and legend markers).
+- Sequential/diverging palettes: build a Colormap object; if `palette_bins`
+  is provided, discretize into bins (linear or quantile) and apply both
+  the resulting ListedColormap and BoundaryNorm to mappables (imshow,
+  pcolormesh, contourf) and refresh colorbars automatically.

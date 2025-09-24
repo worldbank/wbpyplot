@@ -1,0 +1,9 @@
+# Function reference {.doc .doc-index}
+
+## wbpyplot
+
+
+
+| | |
+| --- | --- |
+| [wb_plot](wb_plot.qmd#wbpyplot.wb_plot) | Standardizes/stylizes Matplotlib plots (layout, titles, legends, export) |
