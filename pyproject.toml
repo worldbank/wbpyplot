@@ -1,6 +1,6 @@
 [project]
 name = "wbpyplot"
-version = "0.1.5"
+version = "0.1.6"
 description = "The World Bank data visualization package for `matplotlib` graphs."
 readme = "README.md"
 authors = [
