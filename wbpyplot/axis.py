@@ -5,6 +5,7 @@ import numpy as np
 
 
 def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
+    # --- shared axis label + tick styling ---
     for axis in [ax.xaxis, ax.yaxis]:
         axis.label.set_fontsize(wb_font_sizes["s"])
         axis.label.set_fontweight("semibold")
@@ -20,18 +21,25 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
     ax.grid(True, which="major", linestyle=(0, (4, 2)), linewidth=1, color="#CED4DE")
     ax.tick_params(axis="y", which="both", length=0)
 
-    def add_zero_line():
+    def add_zero_line_h():  # horizontal line at y=0
         if ax.get_yscale() == "linear":
             ax.figure.canvas.draw()
-            ylim = ax.get_ylim()
-            if ylim[0] <= 0 <= ylim[1]:
+            y0, y1 = ax.get_ylim()
+            if y0 <= 0 <= y1:
                 ax.axhline(0, linewidth=1, color="#8A969F", zorder=5)
 
+    def add_zero_line_v():  # vertical line at x=0
+        if ax.get_xscale() == "linear":
+            ax.figure.canvas.draw()
+            x0, x1 = ax.get_xlim()
+            if x0 <= 0 <= x1:
+                ax.axvline(0, linewidth=1, color="#8A969F", zorder=5)
+
     if chart_type in ("scatter", "bar", "line"):
-        add_zero_line()
+        add_zero_line_h()
     if chart_type in ["line", "timeseries"]:
         ax.set_ylim(bottom=0)
-        add_zero_line()
+        add_zero_line_h()
 
     if chart_type == "scatter":
         x_pad = wb_spacing["xxs"]
@@ -62,35 +70,71 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
         ax.grid(False, axis="x")
 
     elif chart_type == "bar":
+        # --- detect orientation from bar containers ---
+        ax.figure.canvas.draw()
+        is_horizontal = False
+        for container in ax.containers:
+            # BarContainer.patches are Rectangles
+            widths = [abs(p.get_width()) for p in container.patches]
+            heights = [abs(p.get_height()) for p in container.patches]
+            if widths and heights:
+                # If data runs along X (barh), widths >> heights (band thickness)
+                # If data runs along Y (bar), heights >> widths
+                if (sum(widths) / len(widths)) > (sum(heights) / len(heights)) * 2.5:
+                    is_horizontal = True
+                    break
+
+        # --- grid + ticks ---
         ax.grid(False, axis="x")
         ax.grid(False, axis="y")
         ax.tick_params(axis="x", which="both", length=0.1, color="#CED4DE")
 
-        ax.figure.canvas.draw()
+        # --- caps + semibold on the categorical axis ---
+        if is_horizontal:
+            # Y is categorical
+            y_ticks = ax.get_yticks()
+            y_labels = [t.get_text() for t in ax.get_yticklabels()]
+            for lbl in ax.get_yticklabels():
+                lbl.set_fontweight("semibold")
+                lbl.set_color("#111111")
+            if any(y_labels):
+                upper = [s.upper() if s else s for s in y_labels]
+                try:
+                    ax.set_yticks(y_ticks, upper)
+                except TypeError:
+                    ax.set_yticks(y_ticks)
+                    ax.set_yticklabels(upper)
 
-        ticks = ax.get_xticks()
-        labels = [t.get_text() for t in ax.get_xticklabels()]
+            # zero line should be vertical at x=0
+            add_zero_line_v()
+        else:
+            # X is categorical (standard vertical bars)
+            x_ticks = ax.get_xticks()
+            x_labels = [t.get_text() for t in ax.get_xticklabels()]
+            for lbl in ax.get_xticklabels():
+                lbl.set_fontweight("semibold")
+                lbl.set_color("#111111")
+            if any(x_labels):
+                upper = [s.upper() if s else s for s in x_labels]
+                try:
+                    ax.set_xticks(x_ticks, upper)
+                except TypeError:
+                    ax.set_xticks(x_ticks)
+                    ax.set_xticklabels(upper)
 
-        for lbl in ax.get_xticklabels():
-            lbl.set_fontweight("semibold")
-            lbl.set_color("#111111")
+            # zero line should be horizontal at y=0
+            add_zero_line_h()
 
-        if any(labels):
-            upper = [s.upper() if s else s for s in labels]
-            try:
-                ax.set_xticks(ticks, upper)
-            except TypeError:
-                ax.set_xticks(ticks)
-                ax.set_xticklabels(upper)
+        # --- bar value labels ---
         for container in ax.containers:
             ax.bar_label(
                 container,
-                fmt="%.0f", 
+                fmt="%.0f",
                 label_type="edge",
                 padding=2,
                 fontsize=wb_font_sizes["s"],
                 fontweight="semibold",
-                color="#111111"
+                color="#111111",
             )
 
 
