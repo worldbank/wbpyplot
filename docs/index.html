@@ -113,18 +113,152 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="wbpyplot" class="level2">
-<h2 class="anchored" data-anchor-id="wbpyplot">wbpyplot</h2>
+<section id="wbpyplot" class="level1">
+<h1>wbpyplot</h1>
 <p>The World Bank <code>matplotlib</code> theme.</p>
-<p>To test, run the following steps:</p>
-<ol type="1">
-<li><p>Clone the repository from <code>worldbank/wbpyplot</code>.</p></li>
-<li><p>In the main directory, run the following code:</p></li>
-</ol>
-<pre><code>uv run wbpyplot/test.py</code></pre>
-<p>A series of graphs should pop up.</p>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<p>Install the package with <code>pip install git+https://github.com/worldbank/wbpyplot</code>.</p>
+</section>
+<section id="using-the-package" class="level2">
+<h2 class="anchored" data-anchor-id="using-the-package">Using the package</h2>
+<p>When the package is installed, load the function decorator into your Python session like so:</p>
+<pre><code>from wbpyplot import wb_plot</code></pre>
+<section id="wb_plot" class="level3">
+<h3 class="anchored" data-anchor-id="wb_plot">wb_plot</h3>
+<p><code>wb_plot</code> is the mai function decorator which styles all <code>matplotlib</code> (and derivatives, such as <code>seaborn</code>). Add it on top of a function calling <code>matlotlib</code> elements.</p>
+<p>For example:</p>
+<pre><code>@wb_plot(
+    width=800,
+    height=500,
+    dpi=100,
+    save_path=None,
+    title="Government Investment in Key Sectors",
+    subtitle="Spending from 2018 to 2024 (adjusted for inflation)",
+    note=[
+        ("Source:", "National Treasury Budget Papers"),
+        ("Note:", "Data adjusted to 2024 dollars using CPI"),
+    ],
+)
+def plot_multi_series(axs, *args, **kwargs):
+    ax = axs[0]
+
+    x = np.arange(2018, 2025)
+    y1 = [10, 15, 20, 23, 25, 27, 30]
+    y2 = [5, 8, 12, 16, 20, 21, 24]
+    y3 = [2, 4, 8, 10, 15, 18, 20]
+
+    ax.plot(x, y1, label="Education")
+    ax.plot(x, y2, label="Healthcare")
+    ax.plot(x, y3, label="Transport")
+
+    # Axis label on Y axis only (WB style for time series)
+    ax.set_ylabel("Funding (AU$ millions)")
 
 
+# Call the decorated function with layout text
+plot_multi_series()</code></pre>
+<p>The theme</p>
+<ul>
+<li>changes the font of all text to Open Sans.</li>
+<li>styles the title, subtitle, caption, axes and legends according to the <a href="https://wbg-vis-design.vercel.app/">World Bank data visualization style guide</a>.</li>
+</ul>
+<p>To apply the World Bank color palettes to your visualizations, see the ‘Colors’ section below.</p>
+<p>On top of that, the theme has some specific style settings for certain chart types.</p>
+<p>With time series line graphs, the vertical grid lines, the X axis title and the Y axis title are removed.</p>
+<p>For line charts, the x aesthetic should be mapped to a date variable, and the y aesthetic to a numerical variable.</p>
+<p>With bar or column graphs, both vertical and horizontal grid lines are removed, the X axis is moved to the top, and the bar labels are capitalized and bolded. The X axis title is removed, but can be added manually.</p>
+<p>For bar charts, the x aesthetic should be mapped to a numerical variable, and the y aesthetic to a discrete variable.</p>
+<p>The World Bank data visualization style calls for value labels next to the bars, which are added by default.</p>
+<pre><code>@wb_plot(
+    title="Employment by Sector",
+    subtitle="Distribution across sectors in 2024",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+)
+def bar_plot(axs):
+    sectors = ["Agriculture", "Industry", "Services"]
+    values = [22, 30, 48]
+
+    ax = axs[0]
+    bars = ax.bar(sectors, values, label="Share of employment")
+
+    ax.set_ylabel("Percentage (%)")
+    ax.set_xlabel("Sector")
+
+
+bar_plot()</code></pre>
+<p>Note that <code>wbpyplot</code>, unlike <code>wbplot</code>, does not currently support beeswarm charts.</p>
+<p>With a scatter plot, the plot is only styled, but no chart elements (such as the Y axis grid lines, for example) are removed.</p>
+<p>For scatter plots, both the x and the y aesthetic should be mapped to a numerical variable.</p>
+<pre><code>@wb_plot(
+    title="GDP vs Life Expectancy",
+    subtitle="Scatterplot of synthetic data",
+    note=[("Source:", "World Bank (fictional).")],
+)
+def scatter_plot(axs):
+    np.random.seed(0)
+    x = np.random.normal(50000, 15000, 100)
+    y = np.random.normal(75, 10, 100)
+
+    axs[0].scatter(x, y, label="Countries")
+    axs[0].set_xlabel("GDP per capita (USD)")
+    axs[0].set_ylabel("Life expectancy (years)")
+
+
+scatter_plot()</code></pre>
+</section>
+<section id="colors" class="level3">
+<h3 class="anchored" data-anchor-id="colors">Colors</h3>
+<section id="all-colors" class="level4">
+<h4 class="anchored" data-anchor-id="all-colors">All colors</h4>
+<p>All World Bank Data Visualization colors are available through the style guide.</p>
+</section>
+<section id="color-scales" class="level4">
+<h4 class="anchored" data-anchor-id="color-scales">Color scales</h4>
+<p><code>wbpyplot</code> comes with several color scales.</p>
+<p>The following palettes are available for mapping discrete variables to chart markers. When the <code>palette</code> parameter matches the mapped level variable, the levels will be automatically matched to their corresponding colors. The available discrete palettes and their levels are:</p>
+<ul>
+<li><code>wb_categorical</code>: the default palette, with 9 distinct colors.</li>
+<li><code>wb_region</code>: colors for regions. Matches the levels “WLD”, “NAC”, “LCN”, “SAS”, “MEA”, “ECS”, “EAS”, “SSF”, “AFE” and “AFW”</li>
+<li><code>wb_income</code>: colors for income classes. Matches the levels “HIC”, “UMIC”, “LMIC” and “LIC”.</li>
+<li><code>wb_gender</code>: colors for gender. Matches the levels “male”, “female” and “diverse”</li>
+<li><code>wb_urbanisation</code>: colors for urbanisation. Matches the levels “urban” and “rural”.</li>
+<li><code>wb_age</code>: colors for age classes. Matches the levels “youngestAge”, “youngerAge”, “middleAge”, “olderAge” and “oldestAge”</li>
+<li><code>wb_binary</code>: colors for binary variables. Matches the levels “yes” and “no”</li>
+</ul>
+<p>Continuous color scales are available for sequential and diverging palettes.</p>
+<ul>
+<li><code>wb_div_default</code>: This diverging scale works best when showing numbers with a connotation of good/bad for higher or lower values (e.g.&nbsp;GDP growth). Use the warmer shades for the numbers with the more negative connotation and the cooler shades to show positive values.</li>
+<li><code>wb_div_alt</code>: This diverging scale can be used as an alternative for the Default diverging scale if you want to emphasize the negative connotation of the numbers more strongly.</li>
+<li><code>wb_div_neutral</code>: This diverging scale was designed to work well in conditions when showing numbers without a clear connotation of good/bad for higher or lower values (e.g.&nbsp;growth in urban vs rural living).</li>
+</ul>
+<p>If you want to sample a small number of colors from the palette, add the parameter <code>palette_n = 2</code> to the function decorator - changing the integer for your number of colors. The function will select the first two hex codes in the list from the defined color palette.</p>
+<p>If you have a continous colour scale (i.e.&nbsp;a scale with “seq” or “div” in the name) and want to bin the values into certain categories, set <code>palette_bins</code> argument. The answer can be one of the following:</p>
+<ul>
+<li><code>None</code>: no discretization (continuous colormap).</li>
+<li>an int: number of equally spaced bins.</li>
+<li>a sequence: explicit bin edges.</li>
+</ul>
+<p>Likewise if you want to break the bins into linear or other discrete bin sizes, set <code>palette_bin_mode</code> to one of “linear” or “quantile”. Only applies when <code>palette_bins</code> is specified.</p>
+<pre><code>@wb_plot(
+    title="Binned with Explicit Thresholds",
+    subtitle="Custom edges: [50, 60, 70, 80, 90, 100]",
+    note=[("Source:", "World Bank, 2024 dataset.")],
+    palette="wb_seq_bad_to_good",
+    palette_bins=[50, 60, 70, 80, 90, 100],  # &lt;- explicit edges
+)
+def heatmap_edges(axs):
+    ax = axs[0]
+    data = np.random.default_rng(2).integers(50, 96, size=(10, 10))
+    im = ax.imshow(data)
+    ax.figure.colorbar(im, ax=ax, label="Literacy (%)")
+
+heatmap_edges()</code></pre>
+
+
+</section>
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
