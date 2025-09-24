@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter, MaxNLocator
+import matplotlib.ticker as mticker 
 import numpy as np
 
 
@@ -64,6 +65,34 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
         ax.grid(False, axis="x")
         ax.grid(False, axis="y")
         ax.tick_params(axis="x", which="both", length=0.1, color="#CED4DE")
+
+        ax.figure.canvas.draw()
+
+        ticks = ax.get_xticks()
+        labels = [t.get_text() for t in ax.get_xticklabels()]
+
+        for lbl in ax.get_xticklabels():
+            lbl.set_fontweight("semibold")
+            lbl.set_color("#111111")
+
+        if any(labels):
+            upper = [s.upper() if s else s for s in labels]
+            try:
+                ax.set_xticks(ticks, upper)
+            except TypeError:
+                ax.set_xticks(ticks)
+                ax.set_xticklabels(upper)
+        for container in ax.containers:
+            ax.bar_label(
+                container,
+                fmt="%.0f", 
+                label_type="edge",
+                padding=2,
+                fontsize=wb_font_sizes["s"],
+                fontweight="semibold",
+                color="#111111"
+            )
+
 
 
 def detect_chart_type(ax):

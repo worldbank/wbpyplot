@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 
 PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-
 def set_font_family(file):
     font_file = os.path.join(PACKAGE_DIR, "fonts", file)
     if not os.path.isfile(font_file):
