@@ -1,6 +1,4 @@
-
 import textwrap
-import matplotlib.pyplot as plt
 
 def px_to_fig_frac(px, fig, axis='y'):
     dpi = fig.dpi
