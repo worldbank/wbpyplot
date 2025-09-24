@@ -1,7 +1,7 @@
 [project]
 name = "wbpyplot"
 version = "0.1.0"
-description = "Add your description here"
+description = "The World Bank data visualization package for `matplotlib` graphs."
 readme = "README.md"
 authors = [
     { name = "Zoe Meers", email = "zoe.meers@gmail.com" }
@@ -9,6 +9,8 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "pyfonts>=1.0.0",
+    "cycler",
+    "pypalettes>=0.1.6",
     "matplotlib",
     "morethemes>=0.3.1",
     "seaborn>=0.13.2",
