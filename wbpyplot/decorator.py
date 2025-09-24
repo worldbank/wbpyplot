@@ -19,8 +19,8 @@ from .colors import (
 
 
 def wb_plot(
-    width=600,
-    height=500,
+    width=1000,
+    height=800,
     dpi=100,
     nrows=1,
     ncols=1,
