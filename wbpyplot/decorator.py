@@ -14,8 +14,9 @@ from .colors import (
     apply_annotation_text_colors,
     apply_legend_marker_colors,
     apply_cmap_to_mappables,
-    build_binned_cmap_and_norm_from_axes 
+    build_binned_cmap_and_norm_from_axes,
 )
+
 
 def wb_plot(
     width=600,
@@ -30,8 +31,8 @@ def wb_plot(
     *,
     palette=None,
     palette_n=None,
-    palette_bins=None,           # None | int | sequence of edges
-    palette_bin_mode="linear",   # "linear" | "quantile"
+    palette_bins=None,  # None | int | sequence of edges
+    palette_bin_mode="linear",  # "linear" | "quantile"
 ):
     """
     Standardizes/stylizes Matplotlib plots (layout, titles, legends, export)
@@ -44,6 +45,7 @@ def wb_plot(
       the resulting ListedColormap and BoundaryNorm to mappables (imshow,
       pcolormesh, contourf) and refresh colorbars automatically.
     """
+
     def decorator(plot_func):
         @wraps(plot_func)
         def wrapper(*args, **kwargs):
@@ -78,7 +80,10 @@ def wb_plot(
             binned_cmap, binned_norm = (None, None)
             if cmap is not None and palette_bins is not None:
                 binned_cmap, binned_norm = build_binned_cmap_and_norm_from_axes(
-                    axs, cmap, bins=palette_bins, mode=str(palette_bin_mode or "linear").lower()
+                    axs,
+                    cmap,
+                    bins=palette_bins,
+                    mode=str(palette_bin_mode or "linear").lower(),
                 )
 
             # Apply Colormap (and Norm if binned) to mappables; refresh colorbars
@@ -109,11 +114,11 @@ def wb_plot(
             #         return format_number(value)
             #     except Exception:
             #         return value
-            
+
             # # Format Y-axis
             # y_labels = ax.get_yticks()
             # ax.set_yticklabels([try_format(y) for y in y_labels])
-            
+
             # # Format X-axis (only if not timeseries/scatter)
             # if chart_type != 'timeseries' or chart_type != 'scatter':
             #     x_labels = ax.get_xticks()
@@ -155,4 +160,5 @@ def wb_plot(
                 plt.show()
 
         return wrapper
+
     return decorator

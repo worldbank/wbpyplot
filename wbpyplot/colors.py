@@ -57,7 +57,6 @@ PALETTES = {
         "ECSText": "#AA0000",
         "AFWText": "#767712",
     },
-
     # Sequential palettes
     "wb_seq_bad_to_good": {
         "seq1": "#FDF6DB",
@@ -73,13 +72,12 @@ PALETTES = {
         "seqRev4": "#88506E",
         "seqRev5": "#691B15",
     },
-
     # Diverging palettes
     "wb_div_default": {
         "divNeg3": "#920000",
         "divNeg2": "#BD6126",
         "divNeg1": "#E3A763",
-        "divMid":  "#EFEFEF",
+        "divMid": "#EFEFEF",
         "divPos1": "#80BDE7",
         "divPos2": "#3587C3",
         "divPos3": "#025288",
@@ -93,9 +91,13 @@ PALETTES = {
         "div3R2": "#c9573e",
         "div3R3": "#920000",
     },
-
     # Extras / groups
-    "wb_income": {"HIC": "#016B6C", "UMC": "#73AF48", "LMC": "#DB95D7", "LIC": "#3B4DA6"},
+    "wb_income": {
+        "HIC": "#016B6C",
+        "UMC": "#73AF48",
+        "LMC": "#DB95D7",
+        "LIC": "#3B4DA6",
+    },
     "wb_gender": {"male": "#664AB6", "female": "#FF9800", "diverse": "#4EC2C0"},
     "wb_urbanisation": {"rural": "#54AE89", "urban": "#6D88D1"},
     "wb_age": {
@@ -209,14 +211,18 @@ AUTO_CYCLE_ONLY = {
     "wb_div_alt",
 }
 
+
 def _is_hex_color(s):
     return isinstance(s, str) and s.startswith("#") and (len(s) in (4, 7))
+
 
 def _looks_like_label_map(d):
     return isinstance(d, dict) and d and all(_is_hex_color(v) for v in d.values())
 
+
 def _looks_like_sequence(x):
     return isinstance(x, (list, tuple)) and x and all(_is_hex_color(v) for v in x)
+
 
 def _resolve_from_registry(palette):
     if not isinstance(palette, str) or not PALETTES:
@@ -235,6 +241,7 @@ def _resolve_from_registry(palette):
         return ("sequence", list(node))
     return None
 
+
 def resolve_color_cycle_and_label_map(
     palette=None,
     n=None,
@@ -242,6 +249,7 @@ def resolve_color_cycle_and_label_map(
     """
     Returns (cycler_or_None, label_map_or_None, text_map_or_None, cmap_or_None).
     """
+
     def _force_mode(name: str, reg_tuple):
         if name in LABEL_MAP_ONLY and reg_tuple and reg_tuple[0] == "label_map":
             return ("label_map", reg_tuple[1])
@@ -281,6 +289,7 @@ def resolve_color_cycle_and_label_map(
 
     return None, None, None, None
 
+
 def apply_color_map_to_axes(axs, label_map: dict[str, str]) -> None:
     for ax in axs:
         # Lines
@@ -302,6 +311,7 @@ def apply_color_map_to_axes(axs, label_map: dict[str, str]) -> None:
                 except Exception:
                     pass
 
+
 def apply_annotation_text_colors(axs, text_map: dict[str, str]) -> None:
     for ax in axs:
         for t in ax.texts:
@@ -311,6 +321,7 @@ def apply_annotation_text_colors(axs, text_map: dict[str, str]) -> None:
                     t.set_color(text_map[txt])
                 except Exception:
                     pass
+
 
 def apply_legend_marker_colors(axs, label_map: dict[str, str]) -> None:
     for ax in axs:
@@ -338,6 +349,7 @@ def apply_legend_marker_colors(axs, label_map: dict[str, str]) -> None:
             elif isinstance(h, Patch):
                 h.set_facecolor(c)
                 h.set_edgecolor(c)
+
 
 # -----------------------------------------------------------------------------
 # Continuous -> binned helpers + colorbar handling
@@ -399,6 +411,7 @@ def build_binned_cmap_and_norm_from_axes(axs, cmap, bins, mode="linear"):
     listed = mcolors.ListedColormap(colors, name=getattr(cmap, "name", "binned"))
     norm = mcolors.BoundaryNorm(edges, ncolors=listed.N, clip=True)
     return listed, norm
+
 
 def apply_cmap_to_mappables(axs, cmap, norm=None, force_recreate_cb=True):
     """
