@@ -157,7 +157,7 @@ def wb_plot(
             for ax in axs:
                 chart_type = detect_chart_type(ax)
                 apply_axis_styling(ax, font_sizes, spacing, chart_type)
-                tidy_numeric_ticks(ax, max_ticks=5)
+                tidy_numeric_ticks(ax, max_ticks=5, chart_type=chart_type)
 
             # # --- Optional number formatting
             # def try_format(value):
