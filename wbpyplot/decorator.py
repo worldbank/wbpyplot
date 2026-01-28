@@ -1,5 +1,6 @@
 # decorator.py
 from functools import wraps
+import inspect
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -31,7 +32,8 @@ def wb_plot(
     palette=None,
     palette_n=None,
     palette_bins=None,
-    palette_bin_mode="linear", 
+    palette_bin_mode="linear",
+    include_insets=False,
 ):
     """
     Create a standardized Matplotlib theme via a decorator for the World Bank with consistent styling,
@@ -125,13 +127,39 @@ def wb_plot(
                     ax.set_prop_cycle(cycle)
 
             # === User plotting ===
-            plot_func(axs, *args, **kwargs)
+            # Support both legacy signatures (axs, *args, **kwargs)
+            # and new signatures (fig, axs, *args, **kwargs).
+            sig = inspect.signature(plot_func)
+            n_params = len(
+                [
+                    p
+                    for p in sig.parameters.values()
+                    if p.kind
+                    in (
+                        inspect.Parameter.POSITIONAL_ONLY,
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                    )
+                ]
+            )
+
+            if n_params <= 1:
+                # Legacy: def func(axs, *args, **kwargs)
+                plot_func(axs, *args, **kwargs)
+            else:
+                # New: def func(fig, axs, *args, **kwargs)
+                plot_func(fig, axs, *args, **kwargs)
+
+            # Determine which axes to include in styling / color handling.
+            if include_insets:
+                axes_for_styling = fig.get_axes()
+            else:
+                axes_for_styling = axs
 
             # If we have a continuous cmap and binning requested, build binned variants
             binned_cmap, binned_norm = (None, None)
             if cmap is not None and palette_bins is not None:
                 binned_cmap, binned_norm = build_binned_cmap_and_norm_from_axes(
-                    axs,
+                    axes_for_styling,
                     cmap,
                     bins=palette_bins,
                     mode=str(palette_bin_mode or "linear").lower(),
@@ -139,22 +167,22 @@ def wb_plot(
 
             # Apply Colormap (and Norm if binned) to mappables; refresh colorbars
             apply_cmap_to_mappables(
-                axs,
+                axes_for_styling,
                 binned_cmap if binned_cmap is not None else cmap,
                 norm=binned_norm,
             )
 
             # Label-based recoloring (lines/bars/patches) + legend markers (not text)
             if label_map:
-                apply_color_map_to_axes(axs, label_map)
-                apply_legend_marker_colors(axs, label_map)
+                apply_color_map_to_axes(axes_for_styling, label_map)
+                apply_legend_marker_colors(axes_for_styling, label_map)
 
             # Annotation text colors (NOT legend text)
             if text_map:
-                apply_annotation_text_colors(axs, text_map)
+                apply_annotation_text_colors(axes_for_styling, text_map)
 
             # Axes styling / tidy ticks
-            for ax in axs:
+            for ax in axes_for_styling:
                 chart_type = detect_chart_type(ax)
                 apply_axis_styling(ax, font_sizes, spacing, chart_type)
                 tidy_numeric_ticks(ax, max_ticks=5, chart_type=chart_type)
