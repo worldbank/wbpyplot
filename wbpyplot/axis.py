@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter, MaxNLocator
-import matplotlib.ticker as mticker 
+import matplotlib.ticker as mticker
 import numpy as np
+
+from .number_formatting import format_number
 
 
 def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
@@ -42,11 +44,10 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
             if x0 <= 0 <= x1:
                 ax.axvline(0, linewidth=1, color="#8A969F", zorder=5)
 
-    # For scatter/line/timeseries charts, draw a zero line if 0 is in range,
-    # but do not forcibly clamp the axis to start at 0. This preserves
-    # negative values when they are present while still giving a visual
-    # reference at y=0.
-    if chart_type in ("scatter", "line", "timeseries"):
+    # For line/timeseries only: draw a zero line if 0 is in range. Scatter
+    # (e.g. GDP vs life expectancy) usually doesn't need it and it can make
+    # the plot look odd if the axis extends to 0.
+    if chart_type in ("line", "timeseries"):
         add_zero_line_h()
 
     if chart_type == "scatter":
@@ -162,31 +163,24 @@ def detect_chart_type(ax):
 
 def tidy_numeric_ticks(ax, max_ticks=5, chart_type=None):
     """
-    Apply conservative numeric tick tidying.
+    Apply World Bank number formatting to numeric axis tick labels.
 
-    We only coerce ticks to integers for chart types where whole numbers are
-    typically expected (e.g. bar charts or single numeric displays). For line
-    and timeseries charts, we leave the formatter alone so user-specified or
-    Matplotlib's default decimal formatting is preserved.
+    Uses format_number() so that ticks follow the style guide: comma as
+    thousand separator, K/M/B scaling for large values, and consistent
+    decimal places. Only overrides axes that use Matplotlib's default
+    ScalarFormatter (numeric data); categorical axes are left unchanged.
     """
-    # Only consider integer-style ticks for bar/single_numeric charts.
-    if chart_type not in ("bar", "single_numeric"):
-        return
-
-    int_fmt = FuncFormatter(lambda x, pos: f"{int(round(x))}" if x >= 0 else str(x))
+    wb_fmt = FuncFormatter(lambda x, pos: format_number(x))
 
     for axis in (ax.xaxis, ax.yaxis):
         locs = axis.get_majorticklocs()
         if len(locs) == 0 or not np.issubdtype(type(locs[0]), np.floating):
             continue
 
-        if np.any(locs > 0):
-            axis.set_major_locator(MaxNLocator(nbins=max_ticks, prune=None))
+        # Limit number of ticks for readability
+        axis.set_major_locator(MaxNLocator(nbins=max_ticks, prune=None))
 
-            # Respect any custom formatter already applied. Only override
-            # Matplotlib's default scalar formatter.
-            if isinstance(axis.get_major_formatter(), mticker.ScalarFormatter):
-                axis.set_major_formatter(int_fmt)
-
-            for label in axis.get_ticklabels():
-                label.set_text(label.get_text())
+        # Only override default scalar formatter (numeric axes); leave
+        # categorical or custom formatters (e.g. bar chart categories) alone.
+        if isinstance(axis.get_major_formatter(), mticker.ScalarFormatter):
+            axis.set_major_formatter(wb_fmt)

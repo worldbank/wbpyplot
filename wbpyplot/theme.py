@@ -45,13 +45,14 @@ wb_rcparams = {
 
 
 def get_dynamic_sizes(width):
+    # Sizes tuned so text doesn't dominate the plot area when embedded (e.g. Quarto)
     if width < 400:
-        font_sizes = {"s": 12, "m": 14, "l": 16}
-        spacing = {"xxs": 2, "xs": 4, "s": 6, "m": 12, "l": 14, "xl": 16}
+        font_sizes = {"s": 10, "m": 12, "l": 14}
+        spacing = {"xxs": 2, "xs": 4, "s": 5, "m": 10, "l": 12, "xl": 14}
     elif 400 <= width <= 700:
-        font_sizes = {"s": 13, "m": 15, "l": 18}
-        spacing = {"xxs": 3, "xs": 6, "s": 9, "m": 15, "l": 18, "xl": 21}
+        font_sizes = {"s": 11, "m": 13, "l": 15}
+        spacing = {"xxs": 2, "xs": 5, "s": 7, "m": 11, "l": 14, "xl": 17}
     else:
-        font_sizes = {"s": 14, "m": 16, "l": 20}
-        spacing = {"xxs": 4, "xs": 8, "s": 12, "m": 16, "l": 20, "xl": 24}
+        font_sizes = {"s": 12, "m": 14, "l": 17}
+        spacing = {"xxs": 3, "xs": 6, "s": 9, "m": 13, "l": 16, "xl": 20}
     return font_sizes, spacing

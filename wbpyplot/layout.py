@@ -50,8 +50,7 @@ def render_title_subtitle_note(fig, title, subtitle, note, wb_font_sizes, wb_spa
         fig.canvas.draw()
         bbox = subtitle_text.get_window_extent(renderer=renderer)
         subtitle_height_frac = bbox.height / (fig.get_size_inches()[1] * fig.dpi)
-        # Use a smaller vertical gap between subtitle and plot than before
-        y_pos -= subtitle_height_frac + spacing_frac["m"]
+        y_pos -= subtitle_height_frac + spacing_frac["s"]
 
     notes_to_render = []
     if note:

@@ -1,6 +1,6 @@
 [project]
 name = "wbpyplot"
-version = "0.2.9"
+version = "0.2.10"
 description = "The World Bank data visualization package for `matplotlib` graphs."
 readme = "README.md"
 authors = [
@@ -17,6 +17,8 @@ dependencies = [
     "quartodoc",
     "drawarrow",
     "highlight_text",
+    "plotly", 
+    "geopandas"
 ]
 
 [project.scripts]

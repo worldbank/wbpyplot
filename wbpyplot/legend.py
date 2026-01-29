@@ -26,8 +26,9 @@ def render_legend_below_plot(fig, handles, labels, spacing, y_position, x_positi
                 [],
                 marker="o",
                 linestyle="None",
-                markersize=8,  # Reasonable size for legend markers (original was 7)
-                markeredgewidth=0,
+                markersize=6,  # Match scatter marker size
+                markeredgecolor="white",
+                markeredgewidth=0.8,
                 markerfacecolor=color,
             )
         )
@@ -36,12 +37,13 @@ def render_legend_below_plot(fig, handles, labels, spacing, y_position, x_positi
     x_anchor = x_position if x_position is not None else 0.5
     loc = "lower left" if x_position is not None else "lower center"
 
-    # Build keyword arguments for legend
+    # Single row when ≤7 items (match R/wbplot); otherwise cap at 3 columns
+    ncol = len(labels) if len(labels) <= 7 else min(len(labels), 3)
     legend_kwargs = {
         "loc": loc,
         "bbox_to_anchor": (x_anchor, y_position + spacing_y),
         "bbox_transform": fig.transFigure,
-        "ncol": min(len(labels), 3),
+        "ncol": ncol,
         "frameon": False,
         "handletextpad": 1.2,
         "columnspacing": 1.8,

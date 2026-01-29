@@ -8,6 +8,7 @@ from .theme import get_dynamic_sizes, wb_rcparams
 from .layout import render_title_subtitle_note, compute_total_bottom_margin, px_to_fig_frac
 from .legend import render_legend_below_plot, should_suppress_legend
 from .axis import apply_axis_styling, detect_chart_type, tidy_numeric_ticks
+from matplotlib.collections import PathCollection
 from .number_formatting import format_number
 from .colors import (
     resolve_color_cycle_and_label_map,
@@ -238,15 +239,12 @@ def _render_mpl(
     # Calculate figure size in inches
     figsize_inches = (width / dpi, height / dpi)
     
-    # Get base font sizes and spacing based on width
-    # Use more conservative sizing to handle window resizing better
+    # Get base font sizes and spacing (tuned for embedded output e.g. Quarto)
     font_sizes, spacing = get_dynamic_sizes(width)
-    
-    # For interactive environments, use slightly smaller fonts to prevent overlap
-    # when window is resized smaller. Fonts are in points (absolute), so we
-    # need to be conservative to handle resizing.
-    # Scale down fonts slightly to account for potential window resizing
-    scale_factor = 0.9  # 10% smaller to provide buffer for resizing
+    # Slight scale for resizing; if portrait, scale down so plot area isn't squished
+    scale_factor = 0.95
+    if height > width:
+        scale_factor *= width / height
     font_sizes = {k: max(8, int(v * scale_factor)) for k, v in font_sizes.items()}
 
     # Figure/axes
@@ -326,6 +324,21 @@ def _render_mpl(
         apply_axis_styling(ax, font_sizes, spacing, chart_type)
         tidy_numeric_ticks(ax, max_ticks=5, chart_type=chart_type)
 
+    # Scatter markers: larger size with white outline
+    _SCATTER_MARKER_AREA = 42  # ~6.5pt radius
+    for ax in axes_for_styling:
+        for col in ax.collections:
+            if isinstance(col, PathCollection):
+                sizes = col.get_sizes()
+                n = sizes.size if sizes is not None and sizes.size else 0
+                if n == 0:
+                    fc = col.get_facecolors()
+                    n = fc.shape[0] if fc.size else 0
+                if n:
+                    col.set_sizes(np.full(n, _SCATTER_MARKER_AREA))
+                col.set_edgecolors("white")
+                col.set_linewidths(0.8)
+
     # --- Titles, subtitles, notes, legend layout ---
     fig.canvas.draw()
     handles, labels = axs[0].get_legend_handles_labels()
@@ -371,16 +384,12 @@ def _render_mpl(
         fig, axs, handles, note, note_margin_frac, spacing
     )
     
-    # Calculate left and right margins to prevent overlap
-    # Account for y-axis labels, tick labels, and padding
-    left_margin_frac = px_to_fig_frac(spacing["m"], fig, "x")
-    right_margin_frac = px_to_fig_frac(spacing["m"], fig, "x")
-    
-    # Check if any axis has y-axis labels that need space
+    # Left/right margins: keep compact so plot area gets more width
+    left_margin_frac = px_to_fig_frac(spacing["s"], fig, "x")
+    right_margin_frac = px_to_fig_frac(spacing["s"], fig, "x")
     has_ylabel = any(ax.get_ylabel() for ax in axs)
     if has_ylabel:
-        # Add extra space for y-axis label
-        left_margin_frac += px_to_fig_frac(spacing["xl"], fig, "x")
+        left_margin_frac += px_to_fig_frac(spacing["l"], fig, "x")
     
     # Apply margins with padding to prevent overlap
     # Use subplots_adjust with all margins set
@@ -478,7 +487,8 @@ def _render_mpl(
     elif show:
         plt.show()
 
-    return fig, axs
+    # Return None when showing so Quarto/Jupyter don't print (fig, axs)
+    return None if show else (fig, axs)
 
 
 def _render_plotly(
@@ -590,9 +600,13 @@ def _render_plotly(
     # Apply colorscale to traces that support it (if continuous palette)
     if colorscale:
         for trace in fig.data:
-            # Apply colorscale to traces that have z values (heatmaps, etc.)
+            # Apply colorscale to traces that have z values (choropleth, heatmaps, etc.)
             if hasattr(trace, "z") and trace.z is not None:
                 trace.colorscale = colorscale
+                # Choropleth from px.choropleth often uses layout.coloraxis; clear it so
+                # this trace uses its own colorscale (WB palette).
+                if hasattr(trace, "coloraxis") and getattr(trace, "coloraxis", None):
+                    trace.coloraxis = None
             # For scatter plots with color values
             elif hasattr(trace, "marker") and hasattr(trace.marker, "color"):
                 if isinstance(trace.marker.color, (list, np.ndarray)):
@@ -611,30 +625,58 @@ def _render_plotly(
                 if hasattr(trace, "fillcolor"):
                     trace.fillcolor = color
     
-    # Apply default line width and marker size to traces (matching Matplotlib defaults)
-    # This matches Matplotlib's lines.linewidth: 2.0 and lines.markersize: 6
+    # Apply default line width and marker size to traces
+    # Plotly marker size 6 (keep previous size); white outline on scatter markers
     for trace in fig.data:
         if hasattr(trace, "line") and trace.line is not None:
             if not hasattr(trace.line, "width") or trace.line.width is None:
                 trace.line.width = 2.0
-        if hasattr(trace, "marker") and trace.marker is not None:
+        # Scatter traces only: marker size and white outline (Bar traces have no marker.size)
+        if (
+            getattr(trace, "type", None) == "scatter"
+            and hasattr(trace, "marker")
+            and trace.marker is not None
+        ):
             if not hasattr(trace.marker, "size") or trace.marker.size is None:
-                trace.marker.size = 6
+                trace.marker.size = 8
+            trace.marker.line = dict(color="white", width=1)
+
+    # Choropleth/map: detect so we can set geo.domain and apply WB layout
+    has_choropleth = any(getattr(t, "type", None) == "choropleth" for t in fig.data)
+
+    # Bar charts: value labels beside bars (like matplotlib bar_label), no grid in bar direction
+    has_bar = any(getattr(t, "type", None) == "bar" for t in fig.data)
+    is_bar_chart_horizontal = any(
+        getattr(t, "orientation", None) == "h" for t in fig.data if getattr(t, "type", None) == "bar"
+    ) if has_bar else False
+    if has_bar:
+        def _bar_fmt(v):
+            if isinstance(v, (int, float)):
+                return str(int(v)) if v == int(v) else str(round(v, 2))
+            return str(v)
+        for trace in fig.data:
+            if getattr(trace, "type", None) != "bar":
+                continue
+            # Value labels beside bars (values are in y for vertical, x for horizontal)
+            vals = trace.y if getattr(trace, "orientation", None) != "h" else trace.x
+            if vals is not None:
+                vlist = list(vals) if hasattr(vals, "__iter__") and not isinstance(vals, str) else [vals]
+                trace.text = [_bar_fmt(v) for v in vlist]
+                trace.textposition = "outside"
 
     # Detect if this is a line chart with temporal X-axis (matching Matplotlib behavior)
-    # For line charts with temporal X-axis: remove X-axis label and tick marks
-    # This matches Matplotlib's behavior: ax.set_xlabel("") and ax.set_xticks([]) for timeseries
-    # A line chart is considered temporal if:
-    # 1. It has lines (line chart)
-    # 2. X-axis is datetime-like OR numeric (line charts with numeric X are typically temporal)
+    # For line charts with temporal X-axis only: remove X-axis label and tick marks.
+    # Do NOT apply to scatter plots or other chart types (they keep X-axis title).
+    # A line chart is temporal if: 1) trace mode includes "lines" (not just "markers"),
+    # 2) X-axis is datetime-like OR numeric.
     is_line_chart_with_temporal_x = False
     if fig.data:
-        # Check if we have line/scatter traces (line charts)
+        # Only treat as line chart when traces actually draw lines (mode contains "lines")
         has_lines = any(
-            hasattr(trace, "mode") and ("lines" in str(trace.mode) or trace.mode is None)
+            hasattr(trace, "mode") and trace.mode and "lines" in str(trace.mode)
             for trace in fig.data
-        ) or any(hasattr(trace, "line") and trace.line is not None for trace in fig.data)
-        
+        )
+
         if has_lines:
             # Check if Plotly has detected it as a date axis (user may have set this)
             if hasattr(fig.layout, "xaxis") and hasattr(fig.layout.xaxis, "type"):
@@ -677,6 +719,42 @@ def _render_plotly(
                             if isinstance(first_val, (int, float, np.integer, np.floating)):
                                 is_line_chart_with_temporal_x = True
                                 break
+
+    # Preserve user-set axis titles (e.g. scatter: xaxis_title="GDP per capita")
+    # Only clear titles for temporal line charts; otherwise keep what the user set
+    def _get_axis_title(fig, axis_name):
+        try:
+            axis = getattr(fig.layout, axis_name, None)
+            if axis is None:
+                return None
+            title = getattr(axis, "title", None)
+            if title is None:
+                return None
+            text = getattr(title, "text", None)
+            return str(text).strip() or None
+        except (AttributeError, TypeError):
+            return None
+
+    existing_xaxis_title = _get_axis_title(fig, "xaxis")
+    existing_yaxis_title = _get_axis_title(fig, "yaxis")
+
+    def _build_axis_title_dict(is_temporal, existing_title, font_size, font_family, standoff=None):
+        """Build x/y axis title dict. Only set 'text' when we have a value so merge preserves user title."""
+        d = {
+            "font": {
+                "size": font_size,
+                "color": "#111111",
+                "family": f"{font_family}, sans-serif",
+                "weight": "bold",
+            },
+        }
+        if is_temporal:
+            d["text"] = ""
+        elif existing_title:
+            d["text"] = existing_title
+        if standoff is not None:
+            d["standoff"] = standoff
+        return d
 
     # Helper function to estimate text height in figure fraction
     # Approximates Matplotlib's bbox.height calculation
@@ -768,14 +846,9 @@ def _render_plotly(
             "showgrid": not is_line_chart_with_temporal_x,  # Remove grid for temporal line charts
             "zeroline": False,
             "tickfont": {"size": font_sizes["s"], "color": "#666666"},
-            "title": {
-                "text": "" if is_line_chart_with_temporal_x else None,  # Remove label for temporal line charts
-                "font": {
-                    "size": font_sizes["s"],
-                    "color": "#111111",
-                    "family": f"{font_family_name}, sans-serif",
-                },
-            },
+            "title": _build_axis_title_dict(
+                is_line_chart_with_temporal_x, existing_xaxis_title, font_sizes["s"], font_family_name, standoff=None
+            ),
             "showticklabels": True,  # Keep tick labels visible (year values)
             "ticklen": 0,  # No tick marks (remove visual marks but keep labels)
         },
@@ -783,18 +856,12 @@ def _render_plotly(
             "gridcolor": "#CED4DE",  # grey200 per style guide
             "gridwidth": 1,  # 1px per style guide
             "griddash": "4,2",  # dash 4 2 per style guide
-            "showgrid": True,
+            "showgrid": not is_bar_chart_horizontal,  # No grid in bar direction (horizontal bars extend along x)
             "zeroline": False,
             "tickfont": {"size": font_sizes["s"], "color": "#666666"},
-            "title": {
-                "text": "" if is_line_chart_with_temporal_x else None,  # Remove label for temporal line charts (move to top)
-                "font": {
-                    "size": font_sizes["s"],
-                    "color": "#111111",
-                    "family": f"{font_family_name}, sans-serif",
-                },
-                "standoff": 0,  # Align title with left edge for text alignment
-            },
+            "title": _build_axis_title_dict(
+                is_line_chart_with_temporal_x, existing_yaxis_title, font_sizes["s"], font_family_name, standoff=0
+            ),
             "showticklabels": True,
             "ticklen": 0,  # No tick marks on Y axis (matches Matplotlib)
         },
@@ -900,8 +967,10 @@ def _render_plotly(
                 trace.name = trace.name.upper()
     
     # Calculate bottom margin dynamically (matching Matplotlib's compute_total_bottom_margin)
-    # Check if there's an x-axis label
-    has_xlabel = layout_updates["xaxis"].get("title", {}).get("text") is not None
+    # X-axis label: user-set title (existing_xaxis_title) or we set it in layout
+    has_xlabel = bool(existing_xaxis_title) or (
+        layout_updates["xaxis"].get("title", {}).get("text") is not None
+    )
     
     xlabel_spacing_frac = (
         spacing_frac["xl"] * 2 if has_xlabel
@@ -977,6 +1046,17 @@ def _render_plotly(
     domain_bottom = max(min(domain_bottom_frac, 0.9), 0.0)
     domain_top = max(min(y_top, 1.0), domain_bottom + 0.05)
     layout_updates["yaxis"]["domain"] = [domain_bottom, domain_top]
+
+    # Choropleth maps use geo, not xaxis/yaxis; set geo.domain so the map sits in the content band
+    if has_choropleth:
+        try:
+            geo_dict = dict(fig.layout.geo) if hasattr(fig.layout, "geo") and fig.layout.geo is not None else {}
+        except Exception:
+            geo_dict = {}
+        layout_updates["geo"] = {
+            **geo_dict,
+            "domain": {"x": [0, 1], "y": [domain_bottom, domain_top]},
+        }
     
     # Update legend styling and position (dynamic based on notes)
     # Legend appears below X-axis title and above notes
@@ -1059,55 +1139,75 @@ def _render_plotly(
     fig.update_layout(**layout_updates)
 
     # Apply default text font to traces that show data labels (e.g. bar charts)
-    # so labels use the theme font size instead of Plotly's default
+    # so labels use the theme font size instead of Plotly's default; bar value labels are bold
     default_text_font = {
         "size": font_sizes["s"],
         "color": "#111111",
         "family": f"{font_family_name}, sans-serif",
     }
+    bar_text_font = {**default_text_font, "weight": "bold"}
     for trace in fig.data:
         if getattr(trace, "text", None) is not None or getattr(trace, "texttemplate", None) is not None:
+            font = bar_text_font if getattr(trace, "type", None) == "bar" else default_text_font
             if getattr(trace, "insidetextfont", None) is None or trace.insidetextfont == {}:
-                trace.insidetextfont = default_text_font.copy()
+                trace.insidetextfont = font.copy()
             if getattr(trace, "outsidetextfont", None) is None or trace.outsidetextfont == {}:
-                trace.outsidetextfont = default_text_font.copy()
+                trace.outsidetextfont = font.copy()
             if getattr(trace, "textfont", None) is None or trace.textfont == {}:
-                trace.textfont = default_text_font.copy()
+                trace.textfont = font.copy()
 
     # Apply custom hovertemplate per World Bank style guide when not set by user.
-    # Plotly only renders <b>, <i>, <br>, <extra> in hovertemplate; <span>/<div>/style show as text.
-    # Line 1: X value (bold header); separator line (underscores); Line 2: Y label + value (bold number).
-    # Use the Y-axis title we captured early, or the one moved to top annotation, otherwise fallback to "Y"
-    y_title = yaxis_title_text_early or (yaxis_title_text if is_line_chart_with_temporal_x else None) or "Y"
-    
+    # Use customdata so numbers show with 2 decimals and strings show as-is (avoid NaN for categories).
+    x_title = existing_xaxis_title or "X"
+    y_title = yaxis_title_text_early or (yaxis_title_text if is_line_chart_with_temporal_x else None) or existing_yaxis_title or "Y"
+
+    def _hover_fmt(val):
+        if isinstance(val, (int, float)) and not np.isnan(val):
+            return str(int(val)) if val == int(val) else str(round(val, 2))
+        return str(val) if val is not None else ""
+
     for trace in fig.data:
         if getattr(trace, "hovertemplate", None) is None and getattr(
             trace, "x", None
         ) is not None and getattr(trace, "y", None) is not None:
-            # Generate separator line to span full width of tooltip box
-            # Use a string of underscores that will fill the tooltip width
-            # (Plotly hovertemplate doesn't support dynamic width, so we use a fixed string)
+            x_vals = list(trace.x) if hasattr(trace.x, "__iter__") and not isinstance(trace.x, str) else [trace.x]
+            y_vals = list(trace.y) if hasattr(trace.y, "__iter__") and not isinstance(trace.y, str) else [trace.y]
+            trace.customdata = [[_hover_fmt(x), _hover_fmt(y)] for x, y in zip(x_vals, y_vals)]
             separator_line = "_" * 30
-            
-            # Visual line under X value (Plotly can't render 1px grey; use underscores for continuous line)
             trace.hovertemplate = (
-                f"<b>%{{x}}</b><br>"
+                f"{x_title}: <b>%{{customdata[0]}}</b><br>"
                 f"{separator_line}<br>"
-                f"{y_title}: <b>%{{y}}</b>"
+                f"{y_title}: <b>%{{customdata[1]}}</b>"
                 "<extra></extra>"
             )
 
-    # Add zero line for y-axis (always shown for linear scales)
-    # Check if scale is linear (default)
-    yaxis_type = fig.layout.yaxis.type
-    if yaxis_type is None or yaxis_type == "linear":
-        fig.update_layout(
-            yaxis=dict(
-                zeroline=True,
-                zerolinewidth=1,
-                zerolinecolor="#8A969F",  # Matches Matplotlib's zero line color
-            )
-        )
+    # Zero line along the value axis: for bar charts use the axis bars extend along (x for horizontal, y for vertical);
+    # for line/scatter etc. always show y-axis zeroline (linear scale)
+    zeroline_style = dict(zeroline=True, zerolinewidth=1, zerolinecolor="#8A969F")
+    if has_bar:
+        if is_bar_chart_horizontal:
+            fig.update_layout(xaxis=zeroline_style)
+        else:
+            fig.update_layout(yaxis=zeroline_style)
+    else:
+        fig.update_layout(yaxis=zeroline_style)
+
+    # Bar charts: categorical axis tick labels uppercase and bold
+    if has_bar:
+        bar_trace = next((t for t in fig.data if getattr(t, "type", None) == "bar"), None)
+        if bar_trace is not None:
+            if is_bar_chart_horizontal:
+                cat_vals = bar_trace.y
+            else:
+                cat_vals = bar_trace.x
+            if cat_vals is not None:
+                categories = list(cat_vals) if hasattr(cat_vals, "__iter__") and not isinstance(cat_vals, str) else [cat_vals]
+                ticktext = [str(c).upper() for c in categories]
+                cat_tickfont = {"size": font_sizes["s"], "color": "#666666", "weight": "bold"}
+                if is_bar_chart_horizontal:
+                    fig.update_layout(yaxis=dict(tickvals=categories, ticktext=ticktext, tickfont=cat_tickfont))
+                else:
+                    fig.update_layout(xaxis=dict(tickvals=categories, ticktext=ticktext, tickfont=cat_tickfont))
 
     # Save; rely on the caller / environment to display the returned figure.
     # Most notebook/IDE environments auto-render a returned Plotly Figure,

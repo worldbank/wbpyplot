@@ -11,16 +11,20 @@ wb_plot(
     title=None,
     subtitle=None,
     note=None,
+    legend_title=None,
     palette=None,
     palette_n=None,
     palette_bins=None,
     palette_bin_mode='linear',
+    include_insets=False,
+    backend='mpl',
+    show=True,
 )
 ```
 
-Create a standardized Matplotlib theme via a decorator for the World Bank with consistent styling,
+Create a standardized plotting theme via a decorator for the World Bank with consistent styling,
 titles, legends, and optional export. Handles both discrete and
-continuous color logic.
+continuous color logic. Supports **Matplotlib** (default) and **Plotly** backends.
 
 The World Bank's data visualization style guide can be accessed [here](https://wbg-vis-design.vercel.app/).
 
@@ -28,35 +32,41 @@ The World Bank's data visualization style guide can be accessed [here](https://w
 
 | Name             | Type                       | Description                                                                                                                                                                                 | Default    |
 |------------------|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| width            | int                        | Width of the figure in pixels.                                                                                                                                                              | `1200`     |
-| height           | int                        | Height of the figure in pixels.                                                                                                                                                             | `800`      |
-| dpi              | int                        | Resolution of the figure in dots per inch.                                                                                                                                                  | `120`      |
-| nrows            | int                        | Number of subplot rows.                                                                                                                                                                     | `1`        |
-| ncols            | int                        | Number of subplot columns.                                                                                                                                                                  | `1`        |
-| save_path        | str or Path                | File path to save the rendered figure. If ``None``, the figure is not saved.                                                                                                                | `None`     |
+| width            | int                        | Width of the figure in pixels.                                                                                                                                                             | `1200`     |
+| height           | int                        | Height of the figure in pixels.                                                                                                                                                            | `800`      |
+| dpi             | int                        | Resolution of the figure in dots per inch (Matplotlib only).                                                                                                                                | `120`      |
+| nrows            | int                        | Number of subplot rows (Matplotlib only).                                                                                                                                                  | `1`        |
+| ncols            | int                        | Number of subplot columns (Matplotlib only).                                                                                                                                               | `1`        |
+| save_path        | str or Path                | File path to save the rendered figure. If ``None``, the figure is not saved. For Plotly, saves as HTML.                                                                                     | `None`     |
 | title            | str                        | Main title displayed at the top of the figure.                                                                                                                                              | `None`     |
 | subtitle         | str                        | Subtitle displayed below the main title.                                                                                                                                                    | `None`     |
-| note             | str                        | Footnote or caption displayed at the bottom of the figure.                                                                                                                                  | `None`     |
-| palette          | str, sequence, or Colormap | Color palette definition. Supports: - Discrete palettes (cycled through categories). - Label-mapped palettes (map colors by label). - Continuous palettes (generate a Matplotlib Colormap). | `None`     |
-| palette_n        | int                        | Number of colors to sample from the palette.                                                                                                                                                | `None`     |
-| palette_bins     | int, sequence, or None     | Binning strategy for continuous palettes: - ``None``: no discretization (continuous colormap). - int: number of equally spaced bins. - sequence: explicit bin edges.                        | `None`     |
-| palette_bin_mode | (linear, quantile)         | Method for discretizing continuous values when ``palette_bins`` is specified.                                                                                                               | `"linear"` |
+| note             | str, tuple, or list         | Footnote or caption at the bottom. Can be a string, a single ``(label, text)`` tuple, or a list of such tuples (e.g. ``[("Source:", "World Bank."), ("Note:", "Preliminary.")]``).        | `None`     |
+| legend_title     | str                        | Title displayed above the legend entries (bold). If provided, appears above the legend keys.                                                                                                | `None`     |
+| palette          | str, sequence, or Colormap | Color palette. Supports discrete (cycled), label-mapped, and continuous palettes (Matplotlib Colormap / Plotly colorscale). See "Colours and palettes" in Other tips for names.             | `None`     |
+| palette_n        | int                        | Number of colors to sample from the palette.                                                                                                                                               | `None`     |
+| palette_bins     | int, sequence, or None     | Binning for continuous palettes (Matplotlib only): ``None`` = continuous; int = number of bins; sequence = explicit bin edges.                                                              | `None`     |
+| palette_bin_mode | {"linear", "quantile"}     | Method for discretizing when ``palette_bins`` is set (Matplotlib only).                                                                                                                    | `"linear"` |
+| include_insets   | bool                       | Whether to include inset axes in styling (Matplotlib only).                                                                                                                                 | `False`    |
+| backend          | {"mpl", "plotly"}          | Rendering backend: ``"mpl"`` = Matplotlib (default), ``"plotly"`` = Plotly.                                                                                                                 | `"mpl"`    |
+| show             | bool                       | If ``True``, display the figure; if ``False``, create but do not show (e.g. for programmatic use).                                                                                          | `True`     |
 
 ## Notes {.doc-section .doc-section-notes}
 
-- For discrete (categorical) palettes, the function sets
-  ``axes.prop_cycle`` before plotting.
-- For label-mapped palettes, it recolors plot elements and their
-  legend entries by label.
-- For continuous palettes, it creates a Colormap and, if bins are
-  specified, generates a ``ListedColormap`` and corresponding
-  ``BoundaryNorm``. These are applied to compatible artists
-  (e.g., ``imshow``, ``pcolormesh``, ``contourf``), and colorbars
-  are refreshed automatically.
+**Matplotlib backend**
+
+- For discrete (categorical) palettes, the function sets ``axes.prop_cycle`` before plotting.
+- For label-mapped palettes, it recolors plot elements and their legend entries by label.
+- For continuous palettes, it creates a Colormap and, if ``palette_bins`` is specified, generates a ``ListedColormap`` and ``BoundaryNorm``. These are applied to compatible artists (e.g. ``imshow``, ``pcolormesh``, ``contourf``), and colorbars are refreshed automatically.
+- Your plotting function should accept ``(fig, axs, *args, **kwargs)`` (or legacy ``(axs, *args, **kwargs)``). Use ``nrows`` and ``ncols`` for subplots; ``axs`` is an array of axes.
+
+**Plotly backend**
+
+- The decorated function should accept ``fig`` as the first parameter (and any other arguments you pass when calling it). Add traces with ``fig.add_scatter``, ``fig.add_bar``, etc.
+- Palettes are applied via Plotly's ``colorway`` (discrete) or ``colorscale`` (continuous).
+- Title, subtitle, and note are rendered in the layout; legends are positioned below the plot automatically.
 
 ## Returns {.doc-section .doc-section-returns}
 
-| Name   | Type                          | Description                |
-|--------|-------------------------------|----------------------------|
-| fig    | matplotlib.figure.Figure      | The created figure object. |
-| axes   | array of matplotlib.axes.Axes | The subplot axes array.    |
+- **Plotly:** The decorated function returns the Plotly figure (so it renders in Quarto/Jupyter).
+- **Matplotlib:** If ``show=True`` (default), returns ``None`` so Quarto/Jupyter do not print ``(fig, axs)``. If ``show=False``, returns ``(fig, axs)`` where ``fig`` is the figure and ``axs`` is the array of subplot axes.
+

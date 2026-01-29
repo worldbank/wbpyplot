@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -98,6 +132,10 @@ ul.task-list li input[type="checkbox"] {
   <li class="nav-item">
     <a class="nav-link" href="./reference/example.html"> 
 <span class="menu-text">Getting Started</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./reference/other-tips.html"> 
+<span class="menu-text">Other Tips</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -188,6 +226,25 @@ def bar_plot(axs):
 
 bar_plot()</code></pre>
 <p>Note that <code>wbpyplot</code>, unlike <code>wbplot</code>, does not currently support beeswarm charts.</p>
+<section id="matching-figure-size-to-display-e.g.-quarto" class="level4">
+<h4 class="anchored" data-anchor-id="matching-figure-size-to-display-e.g.-quarto">Matching figure size to display (e.g.&nbsp;Quarto)</h4>
+<p>Font sizes are chosen from the <code>width</code> you pass to <code>@wb_plot</code> (small &lt;400px, medium 400–700px, large &gt;700px). For titles and axes to look right, <strong>pass a <code>width</code> (and <code>height</code>) that match the size at which the figure will actually be shown</strong>.</p>
+<p>In <strong>Quarto</strong>, set <code>width</code> and <code>height</code> in the decorator to match your output:</p>
+<ul>
+<li><strong>Single-column HTML:</strong> use <code>width=650</code>, <code>height=450</code> (or 600–700 × 400–500).</li>
+<li><strong>Full-width figure:</strong> use <code>width=850</code>, <code>height=550</code> (or 800–900 × 500–600).</li>
+<li><strong>Two columns / narrow:</strong> use <code>width=450</code>, <code>height=350</code>.</li>
+</ul>
+<p>Example for a typical Quarto single-column chunk:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">@wb_plot</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"My chart"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    note<span class="op">=</span>[(<span class="st">"Source:"</span>, <span class="st">"World Bank"</span>)],</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    backend<span class="op">=</span><span class="st">"plotly"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">650</span>,   <span class="co"># match display width so font size is correct</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">450</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> my_chart(fig, df):</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    fig.add_bar(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>With a scatter plot, the plot is only styled, but no chart elements (such as the Y axis grid lines, for example) are removed.</p>
 <p>For scatter plots, both the x and the y aesthetic should be mapped to a numerical variable.</p>
 <pre><code>@wb_plot(
@@ -206,6 +263,7 @@ def scatter_plot(axs):
 
 
 scatter_plot()</code></pre>
+</section>
 </section>
 <section id="colors" class="level3">
 <h3 class="anchored" data-anchor-id="colors">Colors</h3>
