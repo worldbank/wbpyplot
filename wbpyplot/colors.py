@@ -328,7 +328,19 @@ def apply_legend_marker_colors(axs, label_map: dict[str, str]) -> None:
         leg = ax.get_legend()
         if leg is None:
             continue
-        for h, txt in zip(leg.legendHandles, leg.texts):
+        # Matplotlib's Legend internals are not part of the public API and
+        # have changed over time (e.g. ``legendHandles`` vs ``legend_handles``).
+        # Try the modern snake_case attribute first, then fall back to the
+        # older camelCase name for compatibility with older versions.
+        handles = getattr(leg, "legend_handles", None)
+        if handles is None:
+            handles = getattr(leg, "legendHandles", None)
+        if handles is None:
+            # If we can't find either attribute, there is no stable way to
+            # associate legend entries to handles on this Matplotlib version.
+            continue
+
+        for h, txt in zip(handles, leg.texts):
             name = txt.get_text()
             c = label_map.get(name)
             if c is None:
