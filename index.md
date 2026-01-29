@@ -89,7 +89,31 @@ def bar_plot(axs):
 bar_plot()
 ```
 
-Note that `wbpyplot`, unlike `wbplot`, does not currently support beeswarm charts. 
+Note that `wbpyplot`, unlike `wbplot`, does not currently support beeswarm charts.
+
+#### Matching figure size to display (e.g. Quarto)
+
+Font sizes are chosen from the `width` you pass to `@wb_plot` (small &lt;400px, medium 400–700px, large &gt;700px). For titles and axes to look right, **pass a `width` (and `height`) that match the size at which the figure will actually be shown**.
+
+In **Quarto**, set `width` and `height` in the decorator to match your output:
+
+- **Single-column HTML:** use `width=650`, `height=450` (or 600–700 × 400–500).
+- **Full-width figure:** use `width=850`, `height=550` (or 800–900 × 500–600).
+- **Two columns / narrow:** use `width=450`, `height=350`.
+
+Example for a typical Quarto single-column chunk:
+
+```python
+@wb_plot(
+    title="My chart",
+    note=[("Source:", "World Bank")],
+    backend="plotly",
+    width=650,   # match display width so font size is correct
+    height=450,
+)
+def my_chart(fig, df):
+    fig.add_bar(...)
+``` 
 
 With a scatter plot, the plot is only styled, but no chart elements (such as the Y axis grid lines, for example) are removed.
 

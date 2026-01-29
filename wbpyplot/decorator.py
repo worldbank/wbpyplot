@@ -1058,6 +1058,22 @@ def _render_plotly(
 
     fig.update_layout(**layout_updates)
 
+    # Apply default text font to traces that show data labels (e.g. bar charts)
+    # so labels use the theme font size instead of Plotly's default
+    default_text_font = {
+        "size": font_sizes["s"],
+        "color": "#111111",
+        "family": f"{font_family_name}, sans-serif",
+    }
+    for trace in fig.data:
+        if getattr(trace, "text", None) is not None or getattr(trace, "texttemplate", None) is not None:
+            if getattr(trace, "insidetextfont", None) is None or trace.insidetextfont == {}:
+                trace.insidetextfont = default_text_font.copy()
+            if getattr(trace, "outsidetextfont", None) is None or trace.outsidetextfont == {}:
+                trace.outsidetextfont = default_text_font.copy()
+            if getattr(trace, "textfont", None) is None or trace.textfont == {}:
+                trace.textfont = default_text_font.copy()
+
     # Apply custom hovertemplate per World Bank style guide when not set by user.
     # Plotly only renders <b>, <i>, <br>, <extra> in hovertemplate; <span>/<div>/style show as text.
     # Line 1: X value (bold header); separator line (underscores); Line 2: Y label + value (bold number).
