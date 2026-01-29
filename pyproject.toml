@@ -17,7 +17,8 @@ dependencies = [
     "quartodoc",
     "drawarrow",
     "highlight_text",
-    "plotly"
+    "plotly", 
+    "geopandas"
 ]
 
 [project.scripts]

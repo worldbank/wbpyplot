@@ -1,10 +1,11 @@
 def format_number(value, unit=None, is_percent=False, is_currency=False):
     if not isinstance(value, (int, float)):
         return str(value)
+    # Year-like values: no comma (e.g. 2018, 2030)
     if (
         isinstance(value, (int, float))
-        and 1000 <= value <= 2100
         and float(value).is_integer()
+        and 1000 <= value <= 2999
     ):
         return str(int(value))
 

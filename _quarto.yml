@@ -17,6 +17,9 @@ website:
         href: reference/index.qmd
       - text: Getting Started
         href: reference/example.qmd
+      - text: Other Tips
+        href: reference/other-tips.qmd
+        
 
 quartodoc:
   style: pkgdown

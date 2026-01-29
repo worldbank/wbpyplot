@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>other-tips – wbpyplot</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">wbpyplot</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../reference/index.html"> 
+<span class="menu-text">Reference</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../reference/example.html"> 
+<span class="menu-text">Getting Started</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../reference/other-tips.html" aria-current="page"> 
+<span class="menu-text">Other Tips</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Other tips: tabs, subsets, and maps</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This page shows how to combine Quarto tabsets with graphs, use data subsets in your figures, and add a simple map example.</p>
+<section id="tabs-with-a-graph" class="level2">
+<h2 class="anchored" data-anchor-id="tabs-with-a-graph">Tabs with a graph</h2>
+<p>Use Quarto’s <strong>panel tabset</strong> so readers can switch between views. Put the opening <code>::: {.panel-tabset}</code> before the tabs, then each <code>### Tab name</code> starts a new tab; close with <code>:::</code>.</p>
+<p>Below, the first tab shows a <strong>full-dataset</strong> scatter plot; the next tabs show the same plot <strong>by region</strong> (one subset per tab). All use <code>wbpyplot</code> with the Plotly backend.</p>
+<div id="a82a5d3e" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> wbpyplot <span class="im">import</span> wb_plot</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>gapminder <span class="op">=</span> pd.read_csv(<span class="st">"Gapminder Data.csv"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>continents <span class="op">=</span> gapminder[<span class="st">"continent"</span>].unique().tolist()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Use one year for a cleaner scatter</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>gm <span class="op">=</span> gapminder[gapminder[<span class="st">"year"</span>] <span class="op">==</span> <span class="dv">2007</span>].copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Full data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Africa (subset)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Europe (subset)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="ee2105d8" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@wb_plot</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Life expectancy vs GDP (2007)"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    subtitle<span class="op">=</span><span class="st">"All countries"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    note<span class="op">=</span>[(<span class="st">"Source:"</span>, <span class="st">"Gapminder."</span>)],</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">"wb_categorical"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    legend_title<span class="op">=</span><span class="st">"Region"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">600</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">800</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    backend<span class="op">=</span><span class="st">"plotly"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scatter_full(fig, gm, continents):</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> cont <span class="kw">in</span> continents:</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        mask <span class="op">=</span> gm[<span class="st">"continent"</span>] <span class="op">==</span> cont</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        fig.add_scatter(</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span>gm.loc[mask, <span class="st">"gdpPercap"</span>],</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span>gm.loc[mask, <span class="st">"lifeExp"</span>],</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span>cont,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            mode<span class="op">=</span><span class="st">"markers"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    fig.update_layout(xaxis_title<span class="op">=</span><span class="st">"GDP per capita"</span>, yaxis_title<span class="op">=</span><span class="st">"Life expectancy"</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>scatter_full(gm, continents)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+        <script type="text/javascript">
+        window.PlotlyConfig = {MathJaxConfig: 'local'};
+        if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+        </script>
+        <script type="module">import "https://cdn.plot.ly/plotly-3.3.1.min"</script>
+        
+</div>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="002fb9ac-82f4-4b64-af74-160214dbeab2" class="plotly-graph-div" style="height:800px; width:600px;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("002fb9ac-82f4-4b64-af74-160214dbeab2")) {                    Plotly.newPlot(                        "002fb9ac-82f4-4b64-af74-160214dbeab2",                        [{"mode":"markers","name":"ASIA","x":{"dtype":"f8","bdata":"54R1iKR0jkDGpwAYAxndQPLPDOIDvZVAat\u002fcXx3HmkDRXRJnHV+zQHK\u002fQ1GfZeNAs193umsoo0CA7suZTamrQKmHaHTbqsZAbVUS2Q93sUBuowG80ezYQItUGFsE6t5A3XpND3ansUArajANQ+SYQBEZVvEIzdZASBtHrF8Z50B3hNOCh27EQFwgQfHTUchATMEaZ4svqEAAAAAAAICNQEjfpGlwDZFAmGn7VwzL1UCwrDQp5VukQLWpukf27KhAD0WBPrUl1UCiYpy\u002f5QTnQJ6xL9kwBK9ATIqPT4xYsECOHr+3kQvcQIavr3VlIr1AkdJsHicTo0BqNLkYs6KnQP2FHjGK0aFA"},"y":{"dtype":"f8","bdata":"RIts5\u002fvpRUBxPQrXo+hSQIcW2c73A1BABoGVQ4vcTUAv3SQGgT1SQFpkO99PjVRA6SYxCKwsUECamZmZmalRQARWDi2yvVFA9ihcj8LFTUBI4XoUri9UQDvfT42XplRACtejcD0iUkBeukkMAtNQQB1aZDvfp1NAEoPAyqFlU0BkO99Pjf9RQIGVQ4tsj1JACKwcWmSzUEBGtvP91AhPQBSuR+F65E9AKVyPwvXoUkD0\u002fdR46V5QQHnpJjEI7FFAfT81XroxUkCR7Xw\u002fNf5TQNNNYhBYGVJA\u002ftR46SaJUkCamZmZmZlTQIGVQ4tsp1FADi2yne+PUkBeukkMAltSQNNNYhBYWU9A"},"type":"scatter","line":{"width":2.0},"marker":{"size":8,"line":{"color":"white","width":1}},"customdata":[["974.58","43.83"],["29796.05","75.64"],["1391.25","64.06"],["1713.78","59.72"],["4959.11","72.96"],["39724.98","82.21"],["2452.21","64.7"],["3540.65","70.65"],["11605.71","70.96"],["4471.06","59.54"],["25523.28","80.74"],["31656.07","82.6"],["4519.46","72.54"],["1593.07","67.3"],["23348.14","78.62"],["47306.99","77.59"],["10461.06","71.99"],["12451.66","74.24"],["3095.77","66.8"],["944","62.07"],["1091.36","63.78"],["22316.19","75.64"],["2605.95","65.48"],["3190.48","71.69"],["21654.83","72.78"],["47143.18","79.97"],["3970.1","72.4"],["4184.55","74.14"],["28718.28","78.4"],["7458.4","70.62"],["2441.58","74.25"],["3025.35","73.42"],["2280.77","62.7"]],"hovertemplate":"GDP per capita: \u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e______________________________\u003cbr\u003eLife expectancy: \u003cb\u003e%{customdata[1]}\u003c\u002fb\u003e\u003cextra\u003e\u003c\u002fextra\u003e"},{"mode":"markers","name":"EUROPE","x":{"dtype":"f8","bdata":"YhQEjwcxt0BYyjLEz6PhQG+70FyTc+BA8nhafkwWvUDPMSB7ZdzEQBXGFoKcjcxAH7qgvlNM1kCxbVFmzTnhQPmgZ7PiNuBAduCcEYHB3UC+TX\u002f2l2rfQHjuPVya5NpAQni0cTyW0UALYwtBmarhQCxlGeJ\u002f3ONAvJaQD27m20BL58Oz8hLCQJbnwd299+FAVmXfFaYZ6ECiC+pb9g7OQFVNEHVpB9RA09nJ4DwcxUBbI4JxRB3DQGB2Tx6UPdJAcsRafBAq2UAwKqkTRCXcQP+ye\u002fJ3iOBAGH0FaU1Q4kCSCI1gI4XAQOPfZ1xoNuBA"},"y":{"dtype":"f8","bdata":"UI2XbhIbU0CTGARWDvVTQE5iEFg53FNASgwCK4e2UkC4HoXrUUBSQB1aZDvf71JAyXa+nxofU0Boke18P5VTQHnpJjEI1FNANV66SQwqVEBEi2zn+9lTQPT91Hjp3lNAEoPAyqFVUkCcxCCwcnBUQHE9CtejuFNAbef7qfEiVECYbhKDwKJSQFTjpZvE8FNABoGVQ4sMVEB56SYxCORSQIPAyqFFhlNAWDm0yHYeUkDjpZvEIIBSQN9PjZduqlJAJQaBlUN7U0BOYhBYOTxUQH9qvHSTOFRAvp8aL91sVEB9PzVeuvFRQDMzMzMz21NA"},"type":"scatter","line":{"width":2.0},"marker":{"size":8,"line":{"color":"white","width":1}},"customdata":[["5937.03","76.42"],["36126.49","79.83"],["33692.61","79.44"],["7446.3","74.85"],["10680.79","73.0"],["14619.22","75.75"],["22833.31","76.49"],["35278.42","78.33"],["33207.08","79.31"],["30470.02","80.66"],["32170.37","79.41"],["27538.41","79.48"],["18008.94","73.34"],["36180.79","81.76"],["40676.0","78.89"],["28569.72","80.55"],["9253.9","74.54"],["36797.93","79.76"],["49357.19","80.2"],["15389.92","75.56"],["20509.65","78.1"],["10808.48","72.48"],["9786.53","74.0"],["18678.31","74.66"],["25768.26","77.93"],["28821.06","80.94"],["33859.75","80.88"],["37506.42","81.7"],["8458.28","71.78"],["33203.26","79.42"]],"hovertemplate":"GDP per capita: \u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e______________________________\u003cbr\u003eLife expectancy: \u003cb\u003e%{customdata[1]}\u003c\u002fb\u003e\u003cextra\u003e\u003c\u002fextra\u003e"},{"mode":"markers","name":"AFRICA","x":{"dtype":"f8","bdata":"ba0vEl5PuEClaVA0O72yQA5qv7UjhZZA26LMBu2MyEDb2y3JIQSTQKHhg40h4XpAFjWYhmHon0BkkSbeIRCGQOI\u002f3UBBoJpAEj5K2y7RjkA2yMlp1FhxQIwPs5cdYaxAWTFcHQAjmECqJ\u002fOP9kSgQKSK4lUuzbVAaJHtfAu9x0DNCMrI9AqEQJEHx9FxloVAIVnABD7LyUCOc5tw\u002f4WHQNRgGoZvvpRAcXkH0zt1jUCe8BKc2hmCQO3Vx0P\u002f3JZAFRqIZVOFmEB15h4SHuh5QMYzaOi\u002fjMdAMv\u002fomxRTkEBSoKqdzLqHQAqfrYNTSpBA5nXEIZssnEA1KQXdfmbFQI4ev7dZ2K1AvceZJny9iUC7YkZ4D8uyQEoHkEZqXYNA3lSkwuh3n0DdCfZfH\u002fa9QAOrjyy1+IpAZof4h735mEAPnZ5348GaQOYk73dT9IpABbhq6CDxjECGcw0z1BrCQCveyDzKVKRADW5rC3uhsUDhQh7B7U2RQKof5XHCl4tAZMxdS+y0u0AXfnA+hYGQQEDc1avY3JNA1+n2SFlbfUA="},"y":{"dtype":"f8","bdata":"JQaBlUMTUkAhsHJokV1FQHe+nxovXUxAd76fGi9dSUD2KFyPwiVKQArXo3A9ykhA16NwPQo3SUACK4cW2V5GQBfZzvdTU0lAfT81XrpJUEBCYOXQIjtHQPCnxks3qUtARIts5\u002fspSEBoke18P2VLQBKDwMqh1VFAJzEIrBzKSUCF61G4HgVNQPCnxks3eUpArkfhehReTEDTTWIQWLlNQIlBYOXQAk5AN4lBYOUATECLbOf7qTFHQK5H4XoUDktAsp3vp8ZLRUAQWDm0yNZGQLByaJHtfFJAYhBYObS4TUAQWDm0yCZIQLKd76fGO0tA0SLb+X4KUEAlBoGVQzNSQNEi2\u002fl+ylFA0SLb+X4KRUCHFtnO93NKQOXQItv5bkxAy6FFtvNtR0A\u002fNV66SRxTQOXQItv5HkdAbxKDwMphUEAOLbKd74dPQGIQWDm0SEVAMQisHFoUSEAIrBxaZKtIQLpJDAIrR01AWDm0yHbOQ0AZBFYOLUJKQPYoXI\u002fCNU1AUI2XbhJ7UkBMN4lBYMVJQP7UeOkmMUVAdZMYBFa+RUA="},"type":"scatter","line":{"width":2.0},"marker":{"size":8,"line":{"color":"white","width":1}},"customdata":[["6223.37","72.3"],["4797.23","42.73"],["1441.28","56.73"],["12569.85","50.73"],["1217.03","52.3"],["430.07","49.58"],["2042.1","50.43"],["706.02","44.74"],["1704.06","50.65"],["986.15","65.15"],["277.55","46.46"],["3632.56","55.32"],["1544.75","48.33"],["2082.48","54.79"],["5581.18","71.34"],["12154.09","51.58"],["641.37","58.04"],["690.81","52.95"],["13206.48","56.74"],["752.75","59.45"],["1327.61","60.02"],["942.65","56.01"],["579.23","46.39"],["1463.25","54.11"],["1569.33","42.59"],["414.51","45.68"],["12057.5","73.95"],["1044.77","59.44"],["759.35","48.3"],["1042.58","54.47"],["1803.15","64.16"],["10956.99","72.8"],["3820.18","71.16"],["823.69","42.08"],["4811.06","52.91"],["619.68","56.87"],["2013.98","46.86"],["7670.12","76.44"],["863.09","46.24"],["1598.44","65.53"],["1712.47","63.06"],["862.54","42.57"],["926.14","48.16"],["9269.66","49.34"],["2602.39","58.56"],["4513.48","39.61"],["1107.48","52.52"],["882.97","58.42"],["7092.92","73.92"],["1056.38","51.54"],["1271.21","42.38"],["469.71","43.49"]],"hovertemplate":"GDP per capita: \u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e______________________________\u003cbr\u003eLife expectancy: \u003cb\u003e%{customdata[1]}\u003c\u002fb\u003e\u003cextra\u003e\u003c\u002fextra\u003e"},{"mode":"markers","name":"AMERICAS","x":{"dtype":"f8","bdata":"ICQLmLD1yECcwd8vRtytQGkAb4HmtMFAB7Ezhee74UCGONbF0bnJQPruVpaUXrtAqU2c3IfWwkCBs5QsDXrBQBxAv+9fibdA5PbLJ0PZukCuvOR\u002fWmC2QLQh\u002f8wMQrRAECIZcozGkkAGnKVkqbirQOm12VjhmLxAQQ5KmMlkx0BSRIZVpHqlQHui68KXKMNA4KKTpdZMsECIf9jS5\u002fC8QKJ6a2At4NJAdF5jlyCW0UDr\u002fxzm9PjkQDCeQUO7ucRAW5TZIOdLxkA="},"y":{"dtype":"f8","bdata":"FK5H4XrUUkD6fmq8dGNQQClcj8L1GFJAbxKDwMopVEAIrBxaZKNTQDeJQWDlOFJANV66SQyyU0C28\u002f3UeJFTQNejcD0KD1JAVg4tsp2\u002fUkDVeOkmMfhRQH9qvHSTkFFAaJHtfD91TkDpJjEIrIxRQD81XrpJJFJAFK5H4XoMU0Coxks3iTlSQO58PzVe4lJA46WbxCDwUUBt5\u002fup8dpRQDm0yHa+r1NAI9v5fmp0UUBzaJHtfI9TQH9qvHSTGFNAK4cW2c5vUkA="},"type":"scatter","line":{"width":2.0},"marker":{"size":8,"line":{"color":"white","width":1}},"customdata":[["12779.38","75.32"],["3822.14","65.55"],["9065.8","72.39"],["36319.24","80.65"],["13171.64","78.55"],["7006.58","72.89"],["9645.06","78.78"],["8948.1","78.27"],["6025.37","72.24"],["6873.26","74.99"],["5728.35","71.88"],["5186.05","70.26"],["1201.64","60.92"],["3548.33","70.2"],["7320.88","72.57"],["11977.57","76.19"],["2749.32","72.9"],["9809.19","75.54"],["4172.84","71.75"],["7408.91","71.42"],["19328.71","78.75"],["18008.51","69.82"],["42951.65","78.24"],["10611.46","76.38"],["11415.81","73.75"]],"hovertemplate":"GDP per capita: \u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e______________________________\u003cbr\u003eLife expectancy: \u003cb\u003e%{customdata[1]}\u003c\u002fb\u003e\u003cextra\u003e\u003c\u002fextra\u003e"},{"mode":"markers","name":"OCEANIA","x":{"dtype":"f8","bdata":"6IcRwmvQ4EAEHEKVQJjYQA=="},"y":{"dtype":"f8","bdata":"16NwPQpPVECTGARWDg1UQA=="},"type":"scatter","line":{"width":2.0},"marker":{"size":8,"line":{"color":"white","width":1}},"customdata":[["34435.37","81.24"],["25185.01","80.2"]],"hovertemplate":"GDP per capita: \u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e______________________________\u003cbr\u003eLife expectancy: \u003cb\u003e%{customdata[1]}\u003c\u002fb\u003e\u003cextra\u003e\u003c\u002fextra\u003e"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"colorway":["#34A7F2","#FF9800","#664AB6","#4EC2C0","#F3578E","#081079","#0C7C68","#AA0000","#DDDA21"],"xaxis":{"title":{"text":"GDP per capita","font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":"bold"}},"tickfont":{"size":11,"color":"#666666"},"gridcolor":"#CED4DE","gridwidth":1,"griddash":"4,2","showgrid":true,"zeroline":false,"showticklabels":true,"ticklen":0},"yaxis":{"title":{"text":"Life expectancy","font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":"bold"},"standoff":0},"tickfont":{"size":11,"color":"#666666"},"gridcolor":"#CED4DE","gridwidth":1,"griddash":"4,2","showgrid":true,"zeroline":true,"showticklabels":true,"ticklen":0,"domain":[0.166,0.90585],"zerolinewidth":1,"zerolinecolor":"#8A969F"},"font":{"family":"Open Sans, sans-serif","size":11,"color":"#111111"},"margin":{"l":22,"r":11,"t":64,"b":132},"hoverlabel":{"font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif"},"grouptitlefont":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":600},"bgcolor":"white","bordercolor":"#CED4DE","align":"left"},"legend":{"font":{"size":11,"color":"#111111"},"title":{"font":{"size":11,"color":"#111111","weight":600,"family":"Open Sans, sans-serif"},"text":"Region"},"orientation":"h","yanchor":"bottom","y":0.05975,"xanchor":"left","x":0.0033333333333333335,"itemclick":false,"itemdoubleclick":false,"bordercolor":"rgba(0,0,0,0)"},"width":600,"height":800,"plot_bgcolor":"white","paper_bgcolor":"white","annotations":[{"font":{"color":"#111111","family":"Open Sans, sans-serif","size":15},"showarrow":false,"text":"\u003cb\u003eLife expectancy vs GDP (2007)\u003c\u002fb\u003e","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.97875,"yanchor":"top","yref":"paper"},{"font":{"color":"#666666","family":"Open Sans, sans-serif","size":13},"showarrow":false,"text":"All countries","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.9430000000000001,"yanchor":"top","yref":"paper"},{"font":{"color":"#666666","family":"Open Sans, sans-serif","size":11},"showarrow":false,"text":"\u003cb\u003eSource:\u003c\u002fb\u003e Gapminder.","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.0,"yanchor":"bottom","yref":"paper"}]},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('002fb9ac-82f4-4b64-af74-160214dbeab2');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Subset the data with <code>gm[gm["continent"] == "Africa"]</code> and plot in its own tab.</p>
+<div id="06e64b45" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>subset_africa <span class="op">=</span> gm[gm[<span class="st">"continent"</span>] <span class="op">==</span> <span class="st">"Africa"</span>]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">@wb_plot</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Life expectancy vs GDP (2007)"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    subtitle<span class="op">=</span><span class="st">"Africa"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    note<span class="op">=</span>[(<span class="st">"Source:"</span>, <span class="st">"Gapminder."</span>)],</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">600</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    backend<span class="op">=</span><span class="st">"plotly"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scatter_africa(fig, subset_africa):</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    fig.add_scatter(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span>subset_africa[<span class="st">"gdpPercap"</span>],</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span>subset_africa[<span class="st">"lifeExp"</span>],</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">"Africa"</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        mode<span class="op">=</span><span class="st">"markers"</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    fig.update_layout(xaxis_title<span class="op">=</span><span class="st">"GDP per capita"</span>, yaxis_title<span class="op">=</span><span class="st">"Life expectancy"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>scatter_africa(subset_africa)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="1a49a828-0606-4308-ba04-426d04a4576a" class="plotly-graph-div" style="height:500px; width:600px;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("1a49a828-0606-4308-ba04-426d04a4576a")) {                    Plotly.newPlot(                        "1a49a828-0606-4308-ba04-426d04a4576a",                        [{"mode":"markers","name":"AFRICA","x":{"dtype":"f8","bdata":"ba0vEl5PuEClaVA0O72yQA5qv7UjhZZA26LMBu2MyEDb2y3JIQSTQKHhg40h4XpAFjWYhmHon0BkkSbeIRCGQOI\u002f3UBBoJpAEj5K2y7RjkA2yMlp1FhxQIwPs5cdYaxAWTFcHQAjmECqJ\u002fOP9kSgQKSK4lUuzbVAaJHtfAu9x0DNCMrI9AqEQJEHx9FxloVAIVnABD7LyUCOc5tw\u002f4WHQNRgGoZvvpRAcXkH0zt1jUCe8BKc2hmCQO3Vx0P\u002f3JZAFRqIZVOFmEB15h4SHuh5QMYzaOi\u002fjMdAMv\u002fomxRTkEBSoKqdzLqHQAqfrYNTSpBA5nXEIZssnEA1KQXdfmbFQI4ev7dZ2K1AvceZJny9iUC7YkZ4D8uyQEoHkEZqXYNA3lSkwuh3n0DdCfZfH\u002fa9QAOrjyy1+IpAZof4h735mEAPnZ5348GaQOYk73dT9IpABbhq6CDxjECGcw0z1BrCQCveyDzKVKRADW5rC3uhsUDhQh7B7U2RQKof5XHCl4tAZMxdS+y0u0AXfnA+hYGQQEDc1avY3JNA1+n2SFlbfUA="},"y":{"dtype":"f8","bdata":"JQaBlUMTUkAhsHJokV1FQHe+nxovXUxAd76fGi9dSUD2KFyPwiVKQArXo3A9ykhA16NwPQo3SUACK4cW2V5GQBfZzvdTU0lAfT81XrpJUEBCYOXQIjtHQPCnxks3qUtARIts5\u002fspSEBoke18P2VLQBKDwMqh1VFAJzEIrBzKSUCF61G4HgVNQPCnxks3eUpArkfhehReTEDTTWIQWLlNQIlBYOXQAk5AN4lBYOUATECLbOf7qTFHQK5H4XoUDktAsp3vp8ZLRUAQWDm0yNZGQLByaJHtfFJAYhBYObS4TUAQWDm0yCZIQLKd76fGO0tA0SLb+X4KUEAlBoGVQzNSQNEi2\u002fl+ylFA0SLb+X4KRUCHFtnO93NKQOXQItv5bkxAy6FFtvNtR0A\u002fNV66SRxTQOXQItv5HkdAbxKDwMphUEAOLbKd74dPQGIQWDm0SEVAMQisHFoUSEAIrBxaZKtIQLpJDAIrR01AWDm0yHbOQ0AZBFYOLUJKQPYoXI\u002fCNU1AUI2XbhJ7UkBMN4lBYMVJQP7UeOkmMUVAdZMYBFa+RUA="},"type":"scatter","line":{"width":2.0},"marker":{"size":8,"line":{"color":"white","width":1}},"customdata":[["6223.37","72.3"],["4797.23","42.73"],["1441.28","56.73"],["12569.85","50.73"],["1217.03","52.3"],["430.07","49.58"],["2042.1","50.43"],["706.02","44.74"],["1704.06","50.65"],["986.15","65.15"],["277.55","46.46"],["3632.56","55.32"],["1544.75","48.33"],["2082.48","54.79"],["5581.18","71.34"],["12154.09","51.58"],["641.37","58.04"],["690.81","52.95"],["13206.48","56.74"],["752.75","59.45"],["1327.61","60.02"],["942.65","56.01"],["579.23","46.39"],["1463.25","54.11"],["1569.33","42.59"],["414.51","45.68"],["12057.5","73.95"],["1044.77","59.44"],["759.35","48.3"],["1042.58","54.47"],["1803.15","64.16"],["10956.99","72.8"],["3820.18","71.16"],["823.69","42.08"],["4811.06","52.91"],["619.68","56.87"],["2013.98","46.86"],["7670.12","76.44"],["863.09","46.24"],["1598.44","65.53"],["1712.47","63.06"],["862.54","42.57"],["926.14","48.16"],["9269.66","49.34"],["2602.39","58.56"],["4513.48","39.61"],["1107.48","52.52"],["882.97","58.42"],["7092.92","73.92"],["1056.38","51.54"],["1271.21","42.38"],["469.71","43.49"]],"hovertemplate":"GDP per capita: \u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e______________________________\u003cbr\u003eLife expectancy: \u003cb\u003e%{customdata[1]}\u003c\u002fb\u003e\u003cextra\u003e\u003c\u002fextra\u003e"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"colorway":["#34A7F2","#FF9800","#664AB6","#4EC2C0","#F3578E","#081079","#0C7C68","#AA0000","#DDDA21"],"xaxis":{"title":{"text":"GDP per capita","font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":"bold"}},"tickfont":{"size":11,"color":"#666666"},"gridcolor":"#CED4DE","gridwidth":1,"griddash":"4,2","showgrid":true,"zeroline":false,"showticklabels":true,"ticklen":0},"yaxis":{"title":{"text":"Life expectancy","font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":"bold"},"standoff":0},"tickfont":{"size":11,"color":"#666666"},"gridcolor":"#CED4DE","gridwidth":1,"griddash":"4,2","showgrid":true,"zeroline":true,"showticklabels":true,"ticklen":0,"domain":[0.26560000000000006,0.8493599999999999],"zerolinewidth":1,"zerolinecolor":"#8A969F"},"font":{"family":"Open Sans, sans-serif","size":11,"color":"#111111"},"margin":{"l":22,"r":11,"t":64,"b":132},"hoverlabel":{"font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif"},"grouptitlefont":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":600},"bgcolor":"white","bordercolor":"#CED4DE","align":"left"},"legend":{"font":{"size":11,"color":"#111111"},"orientation":"h","yanchor":"bottom","y":0.0956,"xanchor":"left","x":0.0033333333333333335,"itemclick":false,"itemdoubleclick":false,"bordercolor":"rgba(0,0,0,0)"},"width":600,"height":500,"plot_bgcolor":"white","paper_bgcolor":"white","annotations":[{"font":{"color":"#111111","family":"Open Sans, sans-serif","size":15},"showarrow":false,"text":"\u003cb\u003eLife expectancy vs GDP (2007)\u003c\u002fb\u003e","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.966,"yanchor":"top","yref":"paper"},{"font":{"color":"#666666","family":"Open Sans, sans-serif","size":13},"showarrow":false,"text":"Africa","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.9087999999999999,"yanchor":"top","yref":"paper"},{"font":{"color":"#666666","family":"Open Sans, sans-serif","size":11},"showarrow":false,"text":"\u003cb\u003eSource:\u003c\u002fb\u003e Gapminder.","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.0,"yanchor":"bottom","yref":"paper"}]},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('1a49a828-0606-4308-ba04-426d04a4576a');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>Same idea for Europe: filter, then plot in a tab.</p>
+<div id="03fac042" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>subset_europe <span class="op">=</span> gm[gm[<span class="st">"continent"</span>] <span class="op">==</span> <span class="st">"Europe"</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">@wb_plot</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Life expectancy vs GDP (2007)"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    subtitle<span class="op">=</span><span class="st">"Europe"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    note<span class="op">=</span>[(<span class="st">"Source:"</span>, <span class="st">"Gapminder."</span>)],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">600</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">400</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    backend<span class="op">=</span><span class="st">"plotly"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scatter_europe(fig, subset_europe):</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    fig.add_scatter(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span>subset_europe[<span class="st">"gdpPercap"</span>],</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span>subset_europe[<span class="st">"lifeExp"</span>],</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">"Europe"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        mode<span class="op">=</span><span class="st">"markers"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    fig.update_layout(xaxis_title<span class="op">=</span><span class="st">"GDP per capita"</span>, yaxis_title<span class="op">=</span><span class="st">"Life expectancy"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>scatter_europe(subset_europe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="7514ceb7-32de-4c79-abd1-6a6e7771740d" class="plotly-graph-div" style="height:400px; width:600px;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("7514ceb7-32de-4c79-abd1-6a6e7771740d")) {                    Plotly.newPlot(                        "7514ceb7-32de-4c79-abd1-6a6e7771740d",                        [{"mode":"markers","name":"EUROPE","x":{"dtype":"f8","bdata":"YhQEjwcxt0BYyjLEz6PhQG+70FyTc+BA8nhafkwWvUDPMSB7ZdzEQBXGFoKcjcxAH7qgvlNM1kCxbVFmzTnhQPmgZ7PiNuBAduCcEYHB3UC+TX\u002f2l2rfQHjuPVya5NpAQni0cTyW0UALYwtBmarhQCxlGeJ\u002f3ONAvJaQD27m20BL58Oz8hLCQJbnwd299+FAVmXfFaYZ6ECiC+pb9g7OQFVNEHVpB9RA09nJ4DwcxUBbI4JxRB3DQGB2Tx6UPdJAcsRafBAq2UAwKqkTRCXcQP+ye\u002fJ3iOBAGH0FaU1Q4kCSCI1gI4XAQOPfZ1xoNuBA"},"y":{"dtype":"f8","bdata":"UI2XbhIbU0CTGARWDvVTQE5iEFg53FNASgwCK4e2UkC4HoXrUUBSQB1aZDvf71JAyXa+nxofU0Boke18P5VTQHnpJjEI1FNANV66SQwqVEBEi2zn+9lTQPT91Hjp3lNAEoPAyqFVUkCcxCCwcnBUQHE9CtejuFNAbef7qfEiVECYbhKDwKJSQFTjpZvE8FNABoGVQ4sMVEB56SYxCORSQIPAyqFFhlNAWDm0yHYeUkDjpZvEIIBSQN9PjZduqlJAJQaBlUN7U0BOYhBYOTxUQH9qvHSTOFRAvp8aL91sVEB9PzVeuvFRQDMzMzMz21NA"},"type":"scatter","line":{"width":2.0},"marker":{"size":8,"line":{"color":"white","width":1}},"customdata":[["5937.03","76.42"],["36126.49","79.83"],["33692.61","79.44"],["7446.3","74.85"],["10680.79","73.0"],["14619.22","75.75"],["22833.31","76.49"],["35278.42","78.33"],["33207.08","79.31"],["30470.02","80.66"],["32170.37","79.41"],["27538.41","79.48"],["18008.94","73.34"],["36180.79","81.76"],["40676.0","78.89"],["28569.72","80.55"],["9253.9","74.54"],["36797.93","79.76"],["49357.19","80.2"],["15389.92","75.56"],["20509.65","78.1"],["10808.48","72.48"],["9786.53","74.0"],["18678.31","74.66"],["25768.26","77.93"],["28821.06","80.94"],["33859.75","80.88"],["37506.42","81.7"],["8458.28","71.78"],["33203.26","79.42"]],"hovertemplate":"GDP per capita: \u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e______________________________\u003cbr\u003eLife expectancy: \u003cb\u003e%{customdata[1]}\u003c\u002fb\u003e\u003cextra\u003e\u003c\u002fextra\u003e"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"colorway":["#34A7F2","#FF9800","#664AB6","#4EC2C0","#F3578E","#081079","#0C7C68","#AA0000","#DDDA21"],"xaxis":{"title":{"text":"GDP per capita","font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":"bold"}},"tickfont":{"size":11,"color":"#666666"},"gridcolor":"#CED4DE","gridwidth":1,"griddash":"4,2","showgrid":true,"zeroline":false,"showticklabels":true,"ticklen":0},"yaxis":{"title":{"text":"Life expectancy","font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":"bold"},"standoff":0},"tickfont":{"size":11,"color":"#666666"},"gridcolor":"#CED4DE","gridwidth":1,"griddash":"4,2","showgrid":true,"zeroline":true,"showticklabels":true,"ticklen":0,"domain":[0.332,0.8117],"zerolinewidth":1,"zerolinecolor":"#8A969F"},"font":{"family":"Open Sans, sans-serif","size":11,"color":"#111111"},"margin":{"l":22,"r":11,"t":64,"b":132},"hoverlabel":{"font":{"size":11,"color":"#111111","family":"Open Sans, sans-serif"},"grouptitlefont":{"size":11,"color":"#111111","family":"Open Sans, sans-serif","weight":600},"bgcolor":"white","bordercolor":"#CED4DE","align":"left"},"legend":{"font":{"size":11,"color":"#111111"},"orientation":"h","yanchor":"bottom","y":0.1195,"xanchor":"left","x":0.0033333333333333335,"itemclick":false,"itemdoubleclick":false,"bordercolor":"rgba(0,0,0,0)"},"width":600,"height":400,"plot_bgcolor":"white","paper_bgcolor":"white","annotations":[{"font":{"color":"#111111","family":"Open Sans, sans-serif","size":15},"showarrow":false,"text":"\u003cb\u003eLife expectancy vs GDP (2007)\u003c\u002fb\u003e","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.9575,"yanchor":"top","yref":"paper"},{"font":{"color":"#666666","family":"Open Sans, sans-serif","size":13},"showarrow":false,"text":"Europe","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.886,"yanchor":"top","yref":"paper"},{"font":{"color":"#666666","family":"Open Sans, sans-serif","size":11},"showarrow":false,"text":"\u003cb\u003eSource:\u003c\u002fb\u003e Gapminder.","x":0.0033333333333333335,"xanchor":"left","xref":"paper","y":0.0,"yanchor":"bottom","yref":"paper"}]},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('7514ceb7-32de-4c79-abd1-6a6e7771740d');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="subsets-in-one-figure" class="level2">
+<h2 class="anchored" data-anchor-id="subsets-in-one-figure">Subsets in one figure</h2>
+<p>You can also plot multiple subsets in a <strong>single</strong> figure by filtering and passing each subset to the same plotting logic (e.g.&nbsp;one series per continent). The main wbplot-style examples do this: one scatter with all continents, each continent a different color. Subsetting is just <code>df[df["col"] == value]</code> or <code>df[df["year"].between(2000, 2010)]</code>; then use the subset in your <code>fig.add_scatter</code> or <code>ax.scatter</code> calls.</p>
+</section>
+<section id="subplots-nrows-ncols" class="level2">
+<h2 class="anchored" data-anchor-id="subplots-nrows-ncols">Subplots (nrows, ncols)</h2>
+<p>Use <strong><code>nrows</code></strong> and <strong><code>ncols</code></strong> in <code>@wb_plot</code> to create a grid of subplots (Matplotlib backend). The decorator creates a figure with <code>nrows × ncols</code> axes and passes an array <strong><code>axs</code></strong> to your function: use <code>axs[0]</code>, <code>axs[1]</code>, … for a single row, or <code>axs[0, 0]</code>, <code>axs[0, 1]</code>, <code>axs[1, 0]</code>, <code>axs[1, 1]</code> for a 2×2 grid. You can iterate with <code>for ax in axs.flat:</code>.</p>
+<p>Below, the same scatter (GDP vs life expectancy, 2007) is <strong>split by continent</strong>: one facet per continent using <code>nrows=2</code>, <code>ncols=3</code>. Each panel shows one continent’s data; the sixth panel is hidden because there are five continents.</p>
+<div id="971565f6" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@wb_plot</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Life expectancy vs GDP (2007) by continent"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    subtitle<span class="op">=</span><span class="st">"One facet per continent (nrows=2, ncols=3)"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    note<span class="op">=</span>[(<span class="st">"Source:"</span>, <span class="st">"Gapminder."</span>)],</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    nrows<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    ncols<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">1000</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">800</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scatter_by_continent(fig, axs, gm, continents):</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, cont <span class="kw">in</span> <span class="bu">enumerate</span>(continents):</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> axs.flat[i]</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        mask <span class="op">=</span> gm[<span class="st">"continent"</span>] <span class="op">==</span> cont</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        ax.scatter(gm.loc[mask, <span class="st">"gdpPercap"</span>], gm.loc[mask, <span class="st">"lifeExp"</span>])</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">"GDP per capita"</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">"Life expectancy"</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        ax.set_title(cont)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Hide the unused 6th panel (5 continents, 6 panels)</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    axs.flat[<span class="bu">len</span>(continents)].set_visible(<span class="va">False</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>scatter_by_continent(gm, continents)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="other-tips_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="colours-and-palettes" class="level2">
+<h2 class="anchored" data-anchor-id="colours-and-palettes">Colours and palettes</h2>
+<p>You can pass <strong><code>palette=</code></strong> to <code>@wb_plot</code> to control colors. Available palettes include:</p>
+<p><strong>Categorical</strong> (discrete groups, e.g.&nbsp;scatter/bar by category):</p>
+<ul>
+<li><code>wb_categorical</code> — general purpose (up to 9 colors)</li>
+<li><code>wb_region</code> — World Bank regions (WLD, NAC, LCN, SAS, MEA, ECS, EAS, SSF, …)</li>
+<li><code>wb_income</code> — HIC, UMC, LMC, LIC</li>
+<li><code>wb_gender</code> — male, female, diverse</li>
+<li><code>wb_urbanisation</code> — rural, urban</li>
+<li><code>wb_age</code>, <code>wb_binary</code>, <code>wb_total</code>, <code>wb_pillars</code>, etc.</li>
+</ul>
+<p><strong>Sequential</strong> (ordered values, <strong>good for maps and choropleths</strong>):</p>
+<ul>
+<li><code>wb_seq_bad_to_good</code> — light (bad) → dark blue (good)</li>
+<li><code>wb_seq_good_to_bad</code> — light blue → dark red</li>
+<li><code>wb_seq_monochrome_blue</code>, <code>wb_seq_monochrome_green</code>, <code>wb_seq_monochrome_red</code>, <code>wb_seq_monochrome_yellow</code>, <code>wb_seq_monochrome_purple</code> — single-hue gradients</li>
+</ul>
+<p><strong>Diverging</strong> (positive/negative around a midpoint):</p>
+<ul>
+<li><code>wb_div_default</code>, <code>wb_div_alt</code>, <code>wb_div_neutral</code></li>
+</ul>
+<p><strong>For maps:</strong> use a <strong>sequential</strong> palette (e.g.&nbsp;<code>wb_seq_bad_to_good</code> or <code>wb_seq_monochrome_blue</code>) and pass it to <code>@wb_plot(palette="wb_seq_monochrome_blue", ...)</code>. For choropleths, the decorator builds a continuous colormap from the palette. You can discretize with <strong><code>palette_bins</code></strong> (e.g.&nbsp;<code>palette_bins=5</code> or <code>palette_bins=[50, 60, 70, 80, 90]</code>) and <strong><code>palette_bin_mode</code></strong> (<code>"linear"</code> or <code>"quantile"</code>).</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/worldbank\.github\.io\/wbpyplot");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
