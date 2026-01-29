@@ -18,9 +18,9 @@ wb_rcparams = {
     "axes.titleweight": "bold",
     "axes.edgecolor": "none",
     "axes.grid": True,
-    "grid.color": "#CED4DE",
-    "grid.linestyle": (0, (4, 2)),
-    "grid.linewidth": 0.85,
+    "grid.color": "#CED4DE",  # grey200 per style guide
+    "grid.linestyle": (0, (4, 2)),  # dash 4 2 per style guide
+    "grid.linewidth": 1,  # 1px per style guide
     "xtick.direction": "out",
     "ytick.direction": "out",
     "legend.frameon": False,
