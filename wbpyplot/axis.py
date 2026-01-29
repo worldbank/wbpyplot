@@ -18,15 +18,22 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
         ticklabel.set_color("#666666")
         ticklabel.set_linespacing(1.2)
 
-    ax.grid(True, which="major", linestyle=(0, (4, 2)), linewidth=1, color="#CED4DE")
+    # Set grid - but disable X-axis grid for line/timeseries charts
+    # Grid line: color grey200 (#CED4DE), linewidth 1px, dash 4 2 per style guide
+    if chart_type in ("line", "timeseries"):
+        # For line/timeseries charts: only Y-axis grid, no X-axis grid
+        ax.grid(True, which="major", linestyle=(0, (4, 2)), linewidth=1, color="#CED4DE", axis="y")
+        ax.grid(False, axis="x")
+    else:
+        # For other chart types: grid on both axes
+        ax.grid(True, which="major", linestyle=(0, (4, 2)), linewidth=1, color="#CED4DE")
+    
     ax.tick_params(axis="y", which="both", length=0)
 
     def add_zero_line_h():  # horizontal line at y=0
         if ax.get_yscale() == "linear":
-            ax.figure.canvas.draw()
-            y0, y1 = ax.get_ylim()
-            if y0 <= 0 <= y1:
-                ax.axhline(0, linewidth=1, color="#8A969F", zorder=5)
+            # Always show zero line for linear scales (matching Plotly behavior)
+            ax.axhline(0, linewidth=1, color="#8A969F", zorder=5)
 
     def add_zero_line_v():  # vertical line at x=0
         if ax.get_xscale() == "linear":
@@ -57,8 +64,6 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
     elif chart_type == "timeseries":
         ax.set_xlabel("")
         ax.set_xticks([])
-        ax.grid(False, axis="x")
-        ax.grid(True, axis="y")
 
     elif chart_type == "line":
         ax.set_xlabel("")
@@ -68,7 +73,6 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
             label.set_x(label.get_position()[0] - 0.01)
         ax.tick_params(axis="y", which="both", length=0)
         ax.tick_params(axis="x", which="both", length=0.1, color="#CED4DE")
-        ax.grid(False, axis="x")
 
     elif chart_type == "bar":
         # --- detect orientation from bar containers ---
