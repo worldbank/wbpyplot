@@ -1,6 +1,6 @@
 # wbpyplot
 
-The World Bank `matplotlib` theme.
+The World Bank `matplotlib`/`plotly` theme for Python users.
 
 ## Installation
 
@@ -17,7 +17,7 @@ from wbpyplot import wb_plot
 
 ### wb_plot
 
-`@wb_plot` is the main function decorator which styles all `matplotlib` (and derivatives, such as `seaborn`). Add it on top of a function calling `matlotlib` elements.
+`@wb_plot()` is the main function decorator which styles all `matplotlib` and `plotly` graphs. Add it on top of a function calling `matlotlib` elements or a `plotly` figure.
 
 For example: 
 
