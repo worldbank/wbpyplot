@@ -138,6 +138,8 @@ def scatter_by_continent(fig, axs, gm, continents):
 scatter_by_continent(gm, continents)
 ```
 
+For **multi-panel line charts**, set axis labels and legends on each axes (`ax.set_xlabel(...)`, `ax.set_ylabel(...)`, `ax.legend()`). The decorator preserves per-panel labels and in-axes legends in subplot grids; single-chart line optimizations (such as moving the y-axis title to the figure top) apply only when `nrows=1` and `ncols=1`.
+
 ## Colours and palettes
 
 You can pass **`palette=`** to `@wb_plot` to control colors. Available palettes include:

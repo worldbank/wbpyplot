@@ -255,6 +255,7 @@ def _render_mpl(
         dpi=dpi,
     )
     axs = axs.flatten() if isinstance(axs, (list, np.ndarray)) else [axs]
+    is_multi_panel = (nrows * ncols) > 1
 
     # --- Resolve colors (cycle / label_map / text_map / continuous cmap) ---
     cycle, label_map, text_map, cmap = resolve_color_cycle_and_label_map(
@@ -321,7 +322,7 @@ def _render_mpl(
     # Axes styling / tidy ticks
     for ax in axes_for_styling:
         chart_type = detect_chart_type(ax)
-        apply_axis_styling(ax, font_sizes, spacing, chart_type)
+        apply_axis_styling(ax, font_sizes, spacing, chart_type, is_multi_panel=is_multi_panel)
         tidy_numeric_ticks(ax, max_ticks=5, chart_type=chart_type)
 
     # Scatter markers: larger size with white outline
@@ -349,44 +350,53 @@ def _render_mpl(
 
     if should_suppress_legend(handles, labels):
         handles, labels = [], []
-    show_legend = bool(handles)
+    show_legend = bool(handles) and not is_multi_panel
 
     y_top, note_margin_frac, x_margin_frac = render_title_subtitle_note(
         fig, title, subtitle, note, font_sizes, spacing
     )
     
-    # For line/timeseries charts: move Y-axis title to top (underneath subtitle, horizontal)
-    for ax in axes_for_styling:
-        chart_type = detect_chart_type(ax)
-        if chart_type in ("line", "timeseries"):
-            ylabel_text = ax.get_ylabel()
-            if ylabel_text:
-                # Remove Y-axis label from left side
-                ax.set_ylabel("")
-                # Add Y-axis label as text annotation at top (underneath subtitle)
-                fig.canvas.draw()
-                renderer = fig.canvas.get_renderer()
-                ylabel_artist = fig.text(
-                    x_margin_frac,
-                    y_top,
-                    ylabel_text,
-                    fontsize=font_sizes["s"],
-                    fontweight="semibold",
-                    color="#111111",
-                    ha="left",
-                    va="top",
-                    linespacing=1.2,
-                )
-                fig.canvas.draw()
-                bbox = ylabel_artist.get_window_extent(renderer=renderer)
-                ylabel_height_frac = bbox.height / (fig.get_size_inches()[1] * fig.dpi)
-                # Adjust y_top to account for Y-axis label
-                y_top -= ylabel_height_frac + px_to_fig_frac(spacing["s"], fig, "y")
-                break  # Only do this for the first axis
+    # For single-panel line/timeseries charts: move Y-axis title to top (underneath subtitle)
+    if not is_multi_panel:
+        for ax in axes_for_styling:
+            chart_type = detect_chart_type(ax)
+            if chart_type in ("line", "timeseries"):
+                ylabel_text = ax.get_ylabel()
+                if ylabel_text:
+                    # Remove Y-axis label from left side
+                    ax.set_ylabel("")
+                    # Add Y-axis label as text annotation at top (underneath subtitle)
+                    fig.canvas.draw()
+                    renderer = fig.canvas.get_renderer()
+                    ylabel_artist = fig.text(
+                        x_margin_frac,
+                        y_top,
+                        ylabel_text,
+                        fontsize=font_sizes["s"],
+                        fontweight="semibold",
+                        color="#111111",
+                        ha="left",
+                        va="top",
+                        linespacing=1.2,
+                    )
+                    fig.canvas.draw()
+                    bbox = ylabel_artist.get_window_extent(renderer=renderer)
+                    ylabel_height_frac = bbox.height / (fig.get_size_inches()[1] * fig.dpi)
+                    # Adjust y_top to account for Y-axis label
+                    y_top -= ylabel_height_frac + px_to_fig_frac(spacing["s"], fig, "y")
+                    break  # Only do this for the first axis
     
-    total_bottom_margin_frac = compute_total_bottom_margin(
-        fig, axs, handles, note, note_margin_frac, spacing
-    )
+    if is_multi_panel:
+        # Subplot grids keep per-panel axis labels inside each axes; reserve space for notes only.
+        total_bottom_margin_frac = (
+            note_margin_frac + px_to_fig_frac(spacing["l"], fig, "y")
+            if note
+            else px_to_fig_frac(spacing["m"], fig, "y")
+        )
+    else:
+        total_bottom_margin_frac = compute_total_bottom_margin(
+            fig, axs, handles, note, note_margin_frac, spacing
+        )
     
     # Left/right margins: keep compact so plot area gets more width
     left_margin_frac = px_to_fig_frac(spacing["s"], fig, "x")
@@ -407,11 +417,11 @@ def _render_mpl(
     )
     
     # Apply tight_layout AFTER subplots_adjust to ensure no overlap.
-    # Use moderate padding so that spacing feels tight but safe in
-    # interactive environments (including window resizes).
+    # Multi-panel: only constrain top (title/subtitle); let hspace/wspace handle panel labels.
+    tight_rect = [None, None, None, y_top] if is_multi_panel else [None, total_bottom_margin_frac, None, y_top]
     try:
         fig.tight_layout(
-            rect=[None, total_bottom_margin_frac, None, y_top],
+            rect=tight_rect,
             pad=1.5,
             h_pad=1.2 if nrows > 1 else 0.8,
             w_pad=1.2 if ncols > 1 else 0.8,
@@ -448,7 +458,7 @@ def _render_mpl(
     fig.canvas.draw()
     try:
         fig.tight_layout(
-            rect=[None, total_bottom_margin_frac, None, y_top],
+            rect=tight_rect,
             pad=1.5,
             h_pad=1.2 if nrows > 1 else 0.8,
             w_pad=1.2 if ncols > 1 else 0.8,
@@ -466,7 +476,7 @@ def _render_mpl(
         try:
             # Reapply tight_layout with the same padding used above.
             fig.tight_layout(
-                rect=[None, total_bottom_margin_frac, None, y_top],
+                rect=tight_rect,
                 pad=1.5,
                 h_pad=1.2 if nrows > 1 else 0.8,
                 w_pad=1.2 if ncols > 1 else 0.8,
