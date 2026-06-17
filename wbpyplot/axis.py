@@ -6,7 +6,7 @@ import numpy as np
 from .number_formatting import format_number
 
 
-def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type, is_multi_panel=False):
+def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type, is_multi_panel=False, bar_labels=True):
     # --- shared axis label + tick styling ---
     for axis in [ax.xaxis, ax.yaxis]:
         axis.label.set_fontsize(wb_font_sizes["s"])
@@ -131,16 +131,17 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type, is_multi_panel
             add_zero_line_h()
 
         # --- bar value labels ---
-        for container in ax.containers:
-            ax.bar_label(
-                container,
-                fmt="%.0f",
-                label_type="edge",
-                padding=2,
-                fontsize=wb_font_sizes["s"],
-                fontweight="semibold",
-                color="#111111",
-            )
+        if bar_labels:
+            for container in ax.containers:
+                ax.bar_label(
+                    container,
+                    fmt="%.0f",
+                    label_type="edge",
+                    padding=2,
+                    fontsize=wb_font_sizes["s"],
+                    fontweight="semibold",
+                    color="#111111",
+                )
 
 
 

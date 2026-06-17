@@ -38,6 +38,7 @@ def wb_plot(
     include_insets=False,
     backend="mpl",
     show=True,
+    bar_labels=True,
 ):
     """
     Create a standardized plotting theme via a decorator for the World Bank with consistent styling,
@@ -94,6 +95,9 @@ def wb_plot(
     show : bool, default=True
         Whether to automatically display the figure. If ``False``, the figure
         is created but not shown (useful for programmatic use).
+    bar_labels : bool, default=True
+        Whether to add value labels on bar charts (Matplotlib and Plotly).
+        Set to ``False`` to omit automatic bar value labels.
 
     Notes
     -----
@@ -183,6 +187,7 @@ def wb_plot(
                     palette_bin_mode=palette_bin_mode,
                     include_insets=include_insets,
                     show=show,
+                    bar_labels=bar_labels,
                 )
             elif backend == "plotly":
                 return _render_plotly(
@@ -199,6 +204,7 @@ def wb_plot(
                     palette=palette,
                     palette_n=palette_n,
                     show=show,
+                    bar_labels=bar_labels,
                 )
             else:
                 raise ValueError(
@@ -231,6 +237,7 @@ def _render_mpl(
     palette_bin_mode,
     include_insets,
     show,
+    bar_labels,
 ):
     """Render using Matplotlib backend."""
     # Apply global rcparams/theme
@@ -322,7 +329,11 @@ def _render_mpl(
     # Axes styling / tidy ticks
     for ax in axes_for_styling:
         chart_type = detect_chart_type(ax)
-        apply_axis_styling(ax, font_sizes, spacing, chart_type, is_multi_panel=is_multi_panel)
+        apply_axis_styling(
+            ax, font_sizes, spacing, chart_type,
+            is_multi_panel=is_multi_panel,
+            bar_labels=bar_labels,
+        )
         tidy_numeric_ticks(ax, max_ticks=5, chart_type=chart_type)
 
     # Scatter markers: larger size with white outline
@@ -521,6 +532,7 @@ def _render_plotly(
     palette,
     palette_n,
     show,
+    bar_labels,
 ):
     """Render using Plotly backend."""
     try:
@@ -664,7 +676,7 @@ def _render_plotly(
     is_bar_chart_horizontal = any(
         getattr(t, "orientation", None) == "h" for t in fig.data if getattr(t, "type", None) == "bar"
     ) if has_bar else False
-    if has_bar:
+    if has_bar and bar_labels:
         def _bar_fmt(v):
             if isinstance(v, (int, float)):
                 return str(int(v)) if v == int(v) else str(round(v, 2))
