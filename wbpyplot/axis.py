@@ -6,7 +6,7 @@ import numpy as np
 from .number_formatting import format_number
 
 
-def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
+def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type, is_multi_panel=False):
     # --- shared axis label + tick styling ---
     for axis in [ax.xaxis, ax.yaxis]:
         axis.label.set_fontsize(wb_font_sizes["s"])
@@ -63,11 +63,13 @@ def apply_axis_styling(ax, wb_font_sizes, wb_spacing, chart_type):
         ax.tick_params(axis="x", which="both", length=0.1, color="#CED4DE")
 
     elif chart_type == "timeseries":
-        ax.set_xlabel("")
-        ax.set_xticks([])
+        if not is_multi_panel:
+            ax.set_xlabel("")
+            ax.set_xticks([])
 
     elif chart_type == "line":
-        ax.set_xlabel("")
+        if not is_multi_panel:
+            ax.set_xlabel("")
         for label in ax.get_xticklabels():
             label.set_y(label.get_position()[1] - 0.01)
         for label in ax.get_yticklabels():
