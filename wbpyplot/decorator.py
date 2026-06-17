@@ -342,6 +342,10 @@ def _render_mpl(
     # --- Titles, subtitles, notes, legend layout ---
     fig.canvas.draw()
     handles, labels = axs[0].get_legend_handles_labels()
+    existing_ax_legend = axs[0].get_legend()
+    # GeoPandas categorical maps can build an in-axes Legend artist while
+    # get_legend_handles_labels() still returns empty; preserve that legend.
+    has_in_axes_only_legend = existing_ax_legend is not None and len(handles) == 0 and len(labels) == 0
 
     if should_suppress_legend(handles, labels):
         handles, labels = [], []
@@ -417,9 +421,10 @@ def _render_mpl(
         # subplots_adjust should still provide reasonable spacing
         pass
 
-    # Remove any in-axes legend before rendering the custom one
-    if axs[0].get_legend():
-        axs[0].get_legend().remove()
+    # Remove in-axes legend only when replacing with the WB custom legend.
+    # Keep map legends that exist as in-axes Legend artists only.
+    if show_legend and existing_ax_legend and not has_in_axes_only_legend:
+        existing_ax_legend.remove()
 
     fig.canvas.draw()
 
