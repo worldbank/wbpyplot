@@ -296,6 +296,8 @@ def map_plot_mpl(fig, axs, world):
 map_plot_mpl(world)
 ```
 
+If you map **categorical** values (for example, areas of control), set `categorical=True` and `legend=True` in `geopandas.plot(...)`; the discrete in-axes map legend is preserved under `@wb_plot`.
+
 ### `plotly`
 
 ```{python}
